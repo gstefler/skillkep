@@ -1,0 +1,354 @@
+/*
+ * Skill K.E.P — design tokens
+ *
+ * Three layers:
+ *   1. Primitive scales   (--kep-ink-*, --kep-brand-*, --kep-gold-*, status scales)
+ *   2. Semantic tokens    (--kep-bg, --kep-text, --kep-primary …) — components use ONLY these
+ *   3. Modes              (dark theme, compact/comfortable density, tenant brand override)
+ *
+ * Tenant (company) white-labelling: override the --kep-brand-* scale on <html>
+ * itself (inline style or :root[data-tenant]) — every semantic token follows
+ * automatically. Overriding on a deeper wrapper does NOT work, because the
+ * semantic tokens are resolved on :root. See README.
+ */
+
+:root {
+    /* ── 1. Primitives ─────────────────────────────────────────────── */
+
+    /* Ink: neutral with a slight blue-slate bias */
+    --kep-ink-0: #ffffff;
+    --kep-ink-25: #f8f9fb;
+    --kep-ink-50: #f1f3f6;
+    --kep-ink-100: #e5e8ee;
+    --kep-ink-200: #cfd5de;
+    --kep-ink-300: #abb4c2;
+    --kep-ink-400: #808b9d;
+    --kep-ink-500: #5f6a7b;
+    --kep-ink-600: #475060;
+    --kep-ink-700: #343b48;
+    --kep-ink-800: #232933;
+    --kep-ink-850: #1b2028;
+    --kep-ink-900: #14181e;
+    --kep-ink-950: #0d1014;
+
+    /* Brand: "Petrol" — default; replaced per tenant */
+    --kep-brand-50: #ebf6f7;
+    --kep-brand-100: #cfeaee;
+    --kep-brand-200: #a2d6dd;
+    --kep-brand-300: #6bbcc7;
+    --kep-brand-400: #3a9fad;
+    --kep-brand-500: #1a8292;
+    --kep-brand-600: #0e6878;
+    --kep-brand-700: #0c5461;
+    --kep-brand-800: #0d434e;
+    --kep-brand-900: #0c3640;
+    --kep-brand-950: #06222a;
+
+    /* Gold: achievements, certificates, streaks — never for actions */
+    --kep-gold-50: #fdf6e7;
+    --kep-gold-100: #f9e7bf;
+    --kep-gold-300: #eebd57;
+    --kep-gold-500: #d4961a;
+    --kep-gold-700: #8f5f0a;
+    --kep-gold-900: #4d3306;
+
+    /* Status scales */
+    --kep-green-50: #ebf7f0;
+    --kep-green-200: #a9dcbf;
+    --kep-green-400: #45a873;
+    --kep-green-600: #1d7a4b;
+    --kep-green-800: #10492c;
+
+    --kep-amber-50: #fdf3e6;
+    --kep-amber-200: #f4cd96;
+    --kep-amber-400: #e0932e;
+    --kep-amber-600: #a85a07;
+    --kep-amber-800: #5f3305;
+
+    --kep-red-50: #fcefee;
+    --kep-red-200: #f1bbb6;
+    --kep-red-400: #e06a5f;
+    --kep-red-600: #bb3328;
+    --kep-red-800: #6e1d17;
+
+    --kep-blue-50: #edf2fd;
+    --kep-blue-200: #b5c9f3;
+    --kep-blue-400: #5c86e0;
+    --kep-blue-600: #2452c2;
+    --kep-blue-800: #172f6d;
+
+    /* Data visualisation — categorical, order matters (CVD-checked neighbours) */
+    --kep-chart-1: #0e6878;
+    --kep-chart-2: #d4961a;
+    --kep-chart-3: #5c6fd6;
+    --kep-chart-4: #c45a7a;
+    --kep-chart-5: #4f9a5c;
+    --kep-chart-6: #8a6fb8;
+
+    /* ── Typography ────────────────────────────────────────────────── */
+    --kep-font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --kep-font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+    /* Type scale (UI baseline 14px; reading content uses --kep-text-md) */
+    --kep-text-2xs: 0.6875rem; /* 11 — overline, axis labels */
+    --kep-text-xs: 0.75rem;    /* 12 — meta, table captions */
+    --kep-text-sm: 0.875rem;   /* 14 — default UI text */
+    --kep-text-md: 1rem;       /* 16 — reading text, inputs on touch */
+    --kep-text-lg: 1.125rem;   /* 18 — card titles */
+    --kep-text-xl: 1.375rem;   /* 22 — section titles */
+    --kep-text-2xl: 1.75rem;   /* 28 — page titles */
+    --kep-text-3xl: 2.25rem;   /* 36 — KPI figures, hero */
+
+    --kep-leading-tight: 1.2;
+    --kep-leading-snug: 1.35;
+    --kep-leading-normal: 1.5;
+    --kep-leading-relaxed: 1.65;
+
+    --kep-weight-regular: 400;
+    --kep-weight-medium: 500;
+    --kep-weight-semibold: 600;
+    --kep-weight-bold: 700;
+
+    --kep-tracking-tight: -0.015em;
+    --kep-tracking-wide: 0.06em;
+
+    /* ── Spacing (4px grid) ────────────────────────────────────────── */
+    --kep-space-0: 0;
+    --kep-space-0-5: 0.125rem; /* 2 */
+    --kep-space-1: 0.25rem;    /* 4 */
+    --kep-space-1-5: 0.375rem; /* 6 */
+    --kep-space-2: 0.5rem;     /* 8 */
+    --kep-space-2-5: 0.625rem; /* 10 */
+    --kep-space-3: 0.75rem;    /* 12 */
+    --kep-space-4: 1rem;       /* 16 */
+    --kep-space-5: 1.25rem;    /* 20 */
+    --kep-space-6: 1.5rem;     /* 24 */
+    --kep-space-8: 2rem;       /* 32 */
+    --kep-space-10: 2.5rem;    /* 40 */
+    --kep-space-12: 3rem;      /* 48 */
+    --kep-space-16: 4rem;      /* 64 */
+
+    /* ── Shape ─────────────────────────────────────────────────────── */
+    --kep-radius-xs: 2px;
+    --kep-radius-sm: 4px;
+    --kep-radius-md: 6px;
+    --kep-radius-lg: 10px;
+    --kep-radius-pill: 999px;
+
+    --kep-border-width: 1px;
+
+    /* ── Layout ────────────────────────────────────────────────────── */
+    --kep-sidebar-width: 15rem;
+    --kep-topbar-height: 3.5rem;
+    --kep-content-max: 80rem;
+    --kep-reading-max: 42rem;
+
+    /* ── Motion ────────────────────────────────────────────────────── */
+    --kep-duration-fast: 120ms;
+    --kep-duration-base: 200ms;
+    --kep-duration-slow: 320ms;
+    --kep-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --kep-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+    /* ── Layers ────────────────────────────────────────────────────── */
+    --kep-z-sticky: 10;
+    --kep-z-dropdown: 20;
+    --kep-z-overlay: 40;
+    --kep-z-modal: 50;
+    --kep-z-toast: 60;
+    --kep-z-tooltip: 70;
+
+    /* ── Density (comfortable = default) ───────────────────────────── */
+    --kep-control-h-sm: 2rem;     /* 32 */
+    --kep-control-h: 2.25rem;     /* 36 */
+    --kep-control-h-lg: 2.75rem;  /* 44 — touch target */
+    --kep-control-px: 0.875rem;
+    --kep-table-row-h: 3rem;
+    --kep-card-pad: 1.25rem;
+
+    /* ── 2. Semantic tokens — light ───────────────────────────────── */
+    --kep-bg: var(--kep-ink-25);
+    --kep-bg-subtle: var(--kep-ink-50);
+    --kep-surface: var(--kep-ink-0);
+    --kep-surface-raised: var(--kep-ink-0);
+    --kep-surface-sunken: var(--kep-ink-50);
+    --kep-surface-inverse: var(--kep-ink-900);
+    --kep-overlay: rgb(13 16 20 / 0.48);
+
+    --kep-border: var(--kep-ink-100);
+    --kep-border-strong: var(--kep-ink-200);
+    --kep-border-input: var(--kep-ink-300);
+
+    --kep-text: var(--kep-ink-900);
+    --kep-text-muted: var(--kep-ink-600);
+    --kep-text-subtle: var(--kep-ink-500);
+    --kep-text-disabled: var(--kep-ink-400);
+    --kep-text-inverse: var(--kep-ink-0);
+
+    --kep-primary: var(--kep-brand-600);
+    --kep-primary-hover: var(--kep-brand-700);
+    --kep-primary-active: var(--kep-brand-800);
+    --kep-primary-fg: var(--kep-ink-0);
+    --kep-primary-subtle: var(--kep-brand-50);
+    --kep-primary-subtle-fg: var(--kep-brand-700);
+    --kep-primary-border: var(--kep-brand-200);
+    --kep-link: var(--kep-brand-600);
+
+    --kep-focus-ring: var(--kep-brand-500);
+    --kep-selection: var(--kep-brand-100);
+
+    --kep-success: var(--kep-green-600);
+    --kep-success-subtle: var(--kep-green-50);
+    --kep-success-border: var(--kep-green-200);
+    --kep-warning: var(--kep-amber-600);
+    --kep-warning-subtle: var(--kep-amber-50);
+    --kep-warning-border: var(--kep-amber-200);
+    --kep-danger: var(--kep-red-600);
+    --kep-danger-hover: var(--kep-red-800);
+    --kep-danger-subtle: var(--kep-red-50);
+    --kep-danger-border: var(--kep-red-200);
+    --kep-info: var(--kep-blue-600);
+    --kep-info-subtle: var(--kep-blue-50);
+    --kep-info-border: var(--kep-blue-200);
+
+    --kep-achievement: var(--kep-gold-500);
+    --kep-achievement-subtle: var(--kep-gold-50);
+    --kep-achievement-fg: var(--kep-gold-700);
+
+    --kep-track: var(--kep-ink-100);
+
+    /* Elevation */
+    --kep-shadow-xs: 0 1px 2px rgb(20 24 30 / 0.06);
+    --kep-shadow-sm: 0 1px 2px rgb(20 24 30 / 0.06), 0 1px 3px rgb(20 24 30 / 0.08);
+    --kep-shadow-md: 0 2px 4px rgb(20 24 30 / 0.05), 0 6px 16px rgb(20 24 30 / 0.08);
+    --kep-shadow-lg: 0 4px 8px rgb(20 24 30 / 0.06), 0 16px 40px rgb(20 24 30 / 0.14);
+
+    color-scheme: light;
+}
+
+/* ── 3a. Dark theme ─────────────────────────────────────────────────
+ * Applied by [data-theme="dark"], or by the OS preference unless the
+ * user explicitly picked light.
+ */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+        --kep-bg: var(--kep-ink-950);
+        --kep-bg-subtle: var(--kep-ink-900);
+        --kep-surface: var(--kep-ink-900);
+        --kep-surface-raised: var(--kep-ink-850);
+        --kep-surface-sunken: var(--kep-ink-950);
+        --kep-surface-inverse: var(--kep-ink-50);
+        --kep-overlay: rgb(0 0 0 / 0.6);
+        --kep-border: var(--kep-ink-800);
+        --kep-border-strong: var(--kep-ink-700);
+        --kep-border-input: var(--kep-ink-600);
+        --kep-text: var(--kep-ink-50);
+        --kep-text-muted: var(--kep-ink-300);
+        --kep-text-subtle: var(--kep-ink-400);
+        --kep-text-disabled: var(--kep-ink-600);
+        --kep-text-inverse: var(--kep-ink-900);
+        --kep-primary: var(--kep-brand-400);
+        --kep-primary-hover: var(--kep-brand-300);
+        --kep-primary-active: var(--kep-brand-200);
+        --kep-primary-fg: var(--kep-brand-950);
+        --kep-primary-subtle: color-mix(in oklab, var(--kep-brand-400) 16%, transparent);
+        --kep-primary-subtle-fg: var(--kep-brand-200);
+        --kep-primary-border: color-mix(in oklab, var(--kep-brand-400) 40%, transparent);
+        --kep-link: var(--kep-brand-300);
+        --kep-focus-ring: var(--kep-brand-300);
+        --kep-selection: color-mix(in oklab, var(--kep-brand-400) 30%, transparent);
+        --kep-success: var(--kep-green-400);
+        --kep-success-subtle: color-mix(in oklab, var(--kep-green-400) 14%, transparent);
+        --kep-success-border: color-mix(in oklab, var(--kep-green-400) 40%, transparent);
+        --kep-warning: var(--kep-amber-400);
+        --kep-warning-subtle: color-mix(in oklab, var(--kep-amber-400) 14%, transparent);
+        --kep-warning-border: color-mix(in oklab, var(--kep-amber-400) 40%, transparent);
+        --kep-danger: var(--kep-red-400);
+        --kep-danger-hover: var(--kep-red-200);
+        --kep-danger-subtle: color-mix(in oklab, var(--kep-red-400) 14%, transparent);
+        --kep-danger-border: color-mix(in oklab, var(--kep-red-400) 40%, transparent);
+        --kep-info: var(--kep-blue-400);
+        --kep-info-subtle: color-mix(in oklab, var(--kep-blue-400) 14%, transparent);
+        --kep-info-border: color-mix(in oklab, var(--kep-blue-400) 40%, transparent);
+        --kep-achievement: var(--kep-gold-300);
+        --kep-achievement-subtle: color-mix(in oklab, var(--kep-gold-300) 14%, transparent);
+        --kep-achievement-fg: var(--kep-gold-300);
+        --kep-track: var(--kep-ink-800);
+        --kep-shadow-xs: 0 1px 2px rgb(0 0 0 / 0.4);
+        --kep-shadow-sm: 0 1px 3px rgb(0 0 0 / 0.5);
+        --kep-shadow-md: 0 4px 16px rgb(0 0 0 / 0.5);
+        --kep-shadow-lg: 0 16px 40px rgb(0 0 0 / 0.6);
+        color-scheme: dark;
+    }
+}
+
+:root[data-theme='dark'] {
+    --kep-bg: var(--kep-ink-950);
+    --kep-bg-subtle: var(--kep-ink-900);
+    --kep-surface: var(--kep-ink-900);
+    --kep-surface-raised: var(--kep-ink-850);
+    --kep-surface-sunken: var(--kep-ink-950);
+    --kep-surface-inverse: var(--kep-ink-50);
+    --kep-overlay: rgb(0 0 0 / 0.6);
+    --kep-border: var(--kep-ink-800);
+    --kep-border-strong: var(--kep-ink-700);
+    --kep-border-input: var(--kep-ink-600);
+    --kep-text: var(--kep-ink-50);
+    --kep-text-muted: var(--kep-ink-300);
+    --kep-text-subtle: var(--kep-ink-400);
+    --kep-text-disabled: var(--kep-ink-600);
+    --kep-text-inverse: var(--kep-ink-900);
+    --kep-primary: var(--kep-brand-400);
+    --kep-primary-hover: var(--kep-brand-300);
+    --kep-primary-active: var(--kep-brand-200);
+    --kep-primary-fg: var(--kep-brand-950);
+    --kep-primary-subtle: color-mix(in oklab, var(--kep-brand-400) 16%, transparent);
+    --kep-primary-subtle-fg: var(--kep-brand-200);
+    --kep-primary-border: color-mix(in oklab, var(--kep-brand-400) 40%, transparent);
+    --kep-link: var(--kep-brand-300);
+    --kep-focus-ring: var(--kep-brand-300);
+    --kep-selection: color-mix(in oklab, var(--kep-brand-400) 30%, transparent);
+    --kep-success: var(--kep-green-400);
+    --kep-success-subtle: color-mix(in oklab, var(--kep-green-400) 14%, transparent);
+    --kep-success-border: color-mix(in oklab, var(--kep-green-400) 40%, transparent);
+    --kep-warning: var(--kep-amber-400);
+    --kep-warning-subtle: color-mix(in oklab, var(--kep-amber-400) 14%, transparent);
+    --kep-warning-border: color-mix(in oklab, var(--kep-amber-400) 40%, transparent);
+    --kep-danger: var(--kep-red-400);
+    --kep-danger-hover: var(--kep-red-200);
+    --kep-danger-subtle: color-mix(in oklab, var(--kep-red-400) 14%, transparent);
+    --kep-danger-border: color-mix(in oklab, var(--kep-red-400) 40%, transparent);
+    --kep-info: var(--kep-blue-400);
+    --kep-info-subtle: color-mix(in oklab, var(--kep-blue-400) 14%, transparent);
+    --kep-info-border: color-mix(in oklab, var(--kep-blue-400) 40%, transparent);
+    --kep-achievement: var(--kep-gold-300);
+    --kep-achievement-subtle: color-mix(in oklab, var(--kep-gold-300) 14%, transparent);
+    --kep-achievement-fg: var(--kep-gold-300);
+    --kep-track: var(--kep-ink-800);
+    --kep-shadow-xs: 0 1px 2px rgb(0 0 0 / 0.4);
+    --kep-shadow-sm: 0 1px 3px rgb(0 0 0 / 0.5);
+    --kep-shadow-md: 0 4px 16px rgb(0 0 0 / 0.5);
+    --kep-shadow-lg: 0 16px 40px rgb(0 0 0 / 0.6);
+    color-scheme: dark;
+}
+
+/* ── 3b. Density ────────────────────────────────────────────────────
+ * Compact suits admin tables and power users; comfortable is default.
+ */
+[data-density='compact'] {
+    --kep-control-h-sm: 1.75rem;
+    --kep-control-h: 2rem;
+    --kep-control-h-lg: 2.5rem;
+    --kep-control-px: 0.75rem;
+    --kep-table-row-h: 2.25rem;
+    --kep-card-pad: 1rem;
+}
+
+/* ── 3c. Reduced motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --kep-duration-fast: 0ms;
+        --kep-duration-base: 0ms;
+        --kep-duration-slow: 0ms;
+    }
+}

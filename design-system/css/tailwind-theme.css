@@ -1,0 +1,101 @@
+/*
+ * Skill K.E.P — Tailwind CSS v4 bridge
+ *
+ * Exposes the semantic tokens as Tailwind utilities, so Blade templates can write
+ * `bg-surface text-muted border-border rounded-md` and still follow dark mode,
+ * density and tenant branding.
+ *
+ * Usage in resources/css/app.css:
+ *     @import 'tailwindcss';
+ *     @import '../../design-system/css/tokens.css';
+ *     @import '../../design-system/css/components.css';
+ *     @import '../../design-system/css/tailwind-theme.css';
+ */
+
+@theme inline {
+    --font-sans: var(--kep-font-sans);
+    --font-mono: var(--kep-font-mono);
+
+    /* Surfaces */
+    --color-bg: var(--kep-bg);
+    --color-bg-subtle: var(--kep-bg-subtle);
+    --color-surface: var(--kep-surface);
+    --color-surface-raised: var(--kep-surface-raised);
+    --color-surface-sunken: var(--kep-surface-sunken);
+    --color-surface-inverse: var(--kep-surface-inverse);
+
+    /* Borders */
+    --color-border: var(--kep-border);
+    --color-border-strong: var(--kep-border-strong);
+    --color-border-input: var(--kep-border-input);
+
+    /* Text */
+    --color-fg: var(--kep-text);
+    --color-muted: var(--kep-text-muted);
+    --color-subtle: var(--kep-text-subtle);
+    --color-disabled: var(--kep-text-disabled);
+    --color-inverse: var(--kep-text-inverse);
+
+    /* Brand / action */
+    --color-primary: var(--kep-primary);
+    --color-primary-hover: var(--kep-primary-hover);
+    --color-primary-fg: var(--kep-primary-fg);
+    --color-primary-subtle: var(--kep-primary-subtle);
+    --color-primary-subtle-fg: var(--kep-primary-subtle-fg);
+    --color-link: var(--kep-link);
+
+    /* Status */
+    --color-success: var(--kep-success);
+    --color-success-subtle: var(--kep-success-subtle);
+    --color-warning: var(--kep-warning);
+    --color-warning-subtle: var(--kep-warning-subtle);
+    --color-danger: var(--kep-danger);
+    --color-danger-subtle: var(--kep-danger-subtle);
+    --color-info: var(--kep-info);
+    --color-info-subtle: var(--kep-info-subtle);
+    --color-achievement: var(--kep-achievement);
+    --color-achievement-subtle: var(--kep-achievement-subtle);
+
+    /* Charts */
+    --color-chart-1: var(--kep-chart-1);
+    --color-chart-2: var(--kep-chart-2);
+    --color-chart-3: var(--kep-chart-3);
+    --color-chart-4: var(--kep-chart-4);
+    --color-chart-5: var(--kep-chart-5);
+    --color-chart-6: var(--kep-chart-6);
+
+    /* Type scale */
+    --text-2xs: var(--kep-text-2xs);
+    --text-xs: var(--kep-text-xs);
+    --text-sm: var(--kep-text-sm);
+    --text-base: var(--kep-text-md);
+    --text-lg: var(--kep-text-lg);
+    --text-xl: var(--kep-text-xl);
+    --text-2xl: var(--kep-text-2xl);
+    --text-3xl: var(--kep-text-3xl);
+
+    /* Shape & elevation */
+    --radius-xs: var(--kep-radius-xs);
+    --radius-sm: var(--kep-radius-sm);
+    --radius-md: var(--kep-radius-md);
+    --radius-lg: var(--kep-radius-lg);
+    --shadow-xs: var(--kep-shadow-xs);
+    --shadow-sm: var(--kep-shadow-sm);
+    --shadow-md: var(--kep-shadow-md);
+    --shadow-lg: var(--kep-shadow-lg);
+
+    --ease-standard: var(--kep-ease-standard);
+}
+
+/* Tailwind's dark: variant follows the same switch as the tokens */
+@custom-variant dark {
+    @media (prefers-color-scheme: dark) {
+        &:where(:root:not([data-theme='light']) *) {
+            @slot;
+        }
+    }
+
+    &:where([data-theme='dark'] *) {
+        @slot;
+    }
+}

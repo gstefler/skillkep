@@ -1,0 +1,1244 @@
+/*
+ * Skill K.E.P — core components
+ *
+ * Framework-agnostic CSS classes built only on semantic tokens (tokens.css).
+ * Naming: .kep-<component>, modifiers .kep-<component>--<variant>,
+ * parts .kep-<component>__<part>. State via ARIA / data attributes where possible
+ * (aria-current, aria-selected, aria-invalid, data-state).
+ *
+ * Wrapped in @layer components so Tailwind utilities can still override.
+ */
+
+@layer base {
+    .kep-root,
+    .kep-root body {
+        font-family: var(--kep-font-sans);
+        font-size: var(--kep-text-sm);
+        line-height: var(--kep-leading-normal);
+        color: var(--kep-text);
+        background: var(--kep-bg);
+        -webkit-font-smoothing: antialiased;
+        font-feature-settings: 'ss02';
+    }
+
+    .kep-root ::selection {
+        background: var(--kep-selection);
+    }
+
+    .kep-root :focus-visible {
+        outline: 2px solid var(--kep-focus-ring);
+        outline-offset: 2px;
+    }
+}
+
+@layer components {
+    /* ── Typography helpers ─────────────────────────────────────── */
+    .kep-page-title {
+        font-size: var(--kep-text-2xl);
+        font-weight: var(--kep-weight-semibold);
+        line-height: var(--kep-leading-tight);
+        letter-spacing: var(--kep-tracking-tight);
+        text-wrap: balance;
+        margin: 0;
+    }
+
+    .kep-section-title {
+        font-size: var(--kep-text-lg);
+        font-weight: var(--kep-weight-semibold);
+        line-height: var(--kep-leading-snug);
+        margin: 0;
+    }
+
+    .kep-overline {
+        font-size: var(--kep-text-2xs);
+        font-weight: var(--kep-weight-semibold);
+        letter-spacing: var(--kep-tracking-wide);
+        text-transform: uppercase;
+        color: var(--kep-text-subtle);
+    }
+
+    .kep-meta {
+        font-size: var(--kep-text-xs);
+        color: var(--kep-text-subtle);
+    }
+
+    .kep-num {
+        font-variant-numeric: tabular-nums;
+    }
+
+    .kep-prose {
+        max-width: var(--kep-reading-max);
+        font-size: var(--kep-text-md);
+        line-height: var(--kep-leading-relaxed);
+    }
+
+    .kep-link {
+        color: var(--kep-link);
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 2px;
+    }
+
+    .kep-link:hover {
+        text-decoration-thickness: 2px;
+    }
+
+    .kep-icon {
+        width: 1.125em;
+        height: 1.125em;
+        flex-shrink: 0;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.75;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    /* ── Button ─────────────────────────────────────────────────── */
+    .kep-btn {
+        --_bg: var(--kep-surface);
+        --_fg: var(--kep-text);
+        --_bd: var(--kep-border-strong);
+        --_bg-hover: var(--kep-bg-subtle);
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--kep-space-2);
+        height: var(--kep-control-h);
+        padding-inline: var(--kep-control-px);
+        border: var(--kep-border-width) solid var(--_bd);
+        border-radius: var(--kep-radius-md);
+        background: var(--_bg);
+        color: var(--_fg);
+        font: inherit;
+        font-size: var(--kep-text-sm);
+        font-weight: var(--kep-weight-medium);
+        line-height: 1;
+        white-space: nowrap;
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+            background-color var(--kep-duration-fast) var(--kep-ease-standard),
+            border-color var(--kep-duration-fast) var(--kep-ease-standard),
+            box-shadow var(--kep-duration-fast) var(--kep-ease-standard);
+    }
+
+    .kep-btn:hover {
+        background: var(--_bg-hover);
+    }
+
+    .kep-btn:disabled,
+    .kep-btn[aria-disabled='true'] {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+    .kep-btn--primary {
+        --_bg: var(--kep-primary);
+        --_fg: var(--kep-primary-fg);
+        --_bd: var(--kep-primary);
+        --_bg-hover: var(--kep-primary-hover);
+        box-shadow: var(--kep-shadow-xs);
+    }
+
+    .kep-btn--primary:active {
+        --_bg: var(--kep-primary-active);
+    }
+
+    .kep-btn--subtle {
+        --_bg: var(--kep-primary-subtle);
+        --_fg: var(--kep-primary-subtle-fg);
+        --_bd: transparent;
+        --_bg-hover: color-mix(in oklab, var(--kep-primary-subtle) 70%, var(--kep-primary) 12%);
+    }
+
+    .kep-btn--ghost {
+        --_bg: transparent;
+        --_bd: transparent;
+        --_fg: var(--kep-text-muted);
+        --_bg-hover: var(--kep-bg-subtle);
+    }
+
+    .kep-btn--danger {
+        --_bg: var(--kep-danger);
+        --_fg: var(--kep-text-inverse);
+        --_bd: var(--kep-danger);
+        --_bg-hover: var(--kep-danger-hover);
+    }
+
+    .kep-btn--sm {
+        height: var(--kep-control-h-sm);
+        padding-inline: var(--kep-space-2-5);
+        font-size: var(--kep-text-xs);
+    }
+
+    .kep-btn--lg {
+        height: var(--kep-control-h-lg);
+        padding-inline: var(--kep-space-5);
+        font-size: var(--kep-text-md);
+    }
+
+    .kep-btn--icon {
+        width: var(--kep-control-h);
+        padding: 0;
+    }
+
+    .kep-btn-group {
+        display: inline-flex;
+    }
+
+    .kep-btn-group > .kep-btn:not(:first-child) {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        margin-left: calc(var(--kep-border-width) * -1);
+    }
+
+    .kep-btn-group > .kep-btn:not(:last-child) {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .kep-btn-group > .kep-btn[aria-pressed='true'] {
+        background: var(--kep-primary-subtle);
+        color: var(--kep-primary-subtle-fg);
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ── Form controls ──────────────────────────────────────────── */
+    .kep-field {
+        display: grid;
+        gap: var(--kep-space-1-5);
+    }
+
+    .kep-label {
+        font-size: var(--kep-text-sm);
+        font-weight: var(--kep-weight-medium);
+        color: var(--kep-text);
+    }
+
+    .kep-label__req {
+        color: var(--kep-danger);
+        margin-left: 2px;
+    }
+
+    .kep-hint {
+        font-size: var(--kep-text-xs);
+        color: var(--kep-text-subtle);
+    }
+
+    .kep-error {
+        display: flex;
+        align-items: center;
+        gap: var(--kep-space-1);
+        font-size: var(--kep-text-xs);
+        color: var(--kep-danger);
+    }
+
+    .kep-input,
+    .kep-select,
+    .kep-textarea {
+        width: 100%;
+        height: var(--kep-control-h);
+        padding-inline: var(--kep-space-3);
+        border: var(--kep-border-width) solid var(--kep-border-input);
+        border-radius: var(--kep-radius-md);
+        background: var(--kep-surface);
+        color: var(--kep-text);
+        font: inherit;
+        font-size: var(--kep-text-sm);
+        transition:
+            border-color var(--kep-duration-fast),
+            box-shadow var(--kep-duration-fast);
+        box-sizing: border-box;
+    }
+
+    .kep-textarea {
+        height: auto;
+        min-height: 6rem;
+        padding-block: var(--kep-space-2);
+        resize: vertical;
+    }
+
+    .kep-input::placeholder,
+    .kep-textarea::placeholder {
+        color: var(--kep-text-disabled);
+    }
+
+    .kep-input:hover,
+    .kep-select:hover,
+    .kep-textarea:hover {
+        border-color: var(--kep-text-subtle);
+    }
+
+    .kep-input:focus,
+    .kep-select:focus,
+    .kep-textarea:focus {
+        outline: none;
+        border-color: var(--kep-focus-ring);
+        box-shadow: 0 0 0 3px color-mix(in oklab, var(--kep-focus-ring) 25%, transparent);
+    }
+
+    .kep-input[aria-invalid='true'],
+    .kep-select[aria-invalid='true'],
+    .kep-textarea[aria-invalid='true'] {
+        border-color: var(--kep-danger);
+    }
+
+    .kep-input:disabled,
+    .kep-select:disabled {
+        background: var(--kep-surface-sunken);
+        color: var(--kep-text-disabled);
+        cursor: not-allowed;
+    }
+
+    .kep-select {
+        appearance: none;
+        padding-right: var(--kep-space-8);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23808b9d' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.5rem center;
+        background-size: 1.125rem;
+    }
+
+    .kep-input-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .kep-input-group > .kep-icon {
+        position: absolute;
+        left: var(--kep-space-3);
+        color: var(--kep-text-subtle);
+        pointer-events: none;
+    }
+
+    .kep-input-group > .kep-input {
+        padding-left: var(--kep-space-10);
+    }
+
+    .kep-check {
+        display: inline-flex;
+        align-items: flex-start;
+        gap: var(--kep-space-2);
+        cursor: pointer;
+        font-size: var(--kep-text-sm);
+    }
+
+    .kep-check input {
+        width: 1rem;
+        height: 1rem;
+        margin: 0.125rem 0 0;
+        accent-color: var(--kep-primary);
+        flex-shrink: 0;
+    }
+
+    .kep-switch {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--kep-space-2);
+        cursor: pointer;
+        font-size: var(--kep-text-sm);
+    }
+
+    .kep-switch input {
+        appearance: none;
+        width: 2.25rem;
+        height: 1.25rem;
+        margin: 0;
+        border-radius: var(--kep-radius-pill);
+        background: var(--kep-border-strong);
+        position: relative;
+        cursor: pointer;
+        transition: background-color var(--kep-duration-base) var(--kep-ease-standard);
+    }
+
+    .kep-switch input::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background: var(--kep-ink-0);
+        box-shadow: var(--kep-shadow-xs);
+        transition: transform var(--kep-duration-base) var(--kep-ease-standard);
+    }
+
+    .kep-switch input:checked {
+        background: var(--kep-primary);
+    }
+
+    .kep-switch input:checked::after {
+        transform: translateX(1rem);
+    }
+
+    /* ── Badge / status ─────────────────────────────────────────── */
+    .kep-badge {
+        --_bg: var(--kep-bg-subtle);
+        --_fg: var(--kep-text-muted);
+        --_bd: var(--kep-border);
+
+        display: inline-flex;
+        align-items: center;
+        gap: var(--kep-space-1);
+        height: 1.375rem;
+        padding-inline: var(--kep-space-2);
+        border: var(--kep-border-width) solid var(--_bd);
+        border-radius: var(--kep-radius-sm);
+        background: var(--_bg);
+        color: var(--_fg);
+        font-size: var(--kep-text-xs);
+        font-weight: var(--kep-weight-medium);
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .kep-badge--dot::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .kep-badge--brand {
+        --_bg: var(--kep-primary-subtle);
+        --_fg: var(--kep-primary-subtle-fg);
+        --_bd: var(--kep-primary-border);
+    }
+
+    .kep-badge--success {
+        --_bg: var(--kep-success-subtle);
+        --_fg: var(--kep-success);
+        --_bd: var(--kep-success-border);
+    }
+
+    .kep-badge--warning {
+        --_bg: var(--kep-warning-subtle);
+        --_fg: var(--kep-warning);
+        --_bd: var(--kep-warning-border);
+    }
+
+    .kep-badge--danger {
+        --_bg: var(--kep-danger-subtle);
+        --_fg: var(--kep-danger);
+        --_bd: var(--kep-danger-border);
+    }
+
+    .kep-badge--info {
+        --_bg: var(--kep-info-subtle);
+        --_fg: var(--kep-info);
+        --_bd: var(--kep-info-border);
+    }
+
+    .kep-badge--achievement {
+        --_bg: var(--kep-achievement-subtle);
+        --_fg: var(--kep-achievement-fg);
+        --_bd: color-mix(in oklab, var(--kep-achievement) 45%, transparent);
+    }
+
+    /* ── Avatar ─────────────────────────────────────────────────── */
+    .kep-avatar {
+        display: inline-grid;
+        place-items: center;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background: var(--kep-primary-subtle);
+        color: var(--kep-primary-subtle-fg);
+        font-size: var(--kep-text-xs);
+        font-weight: var(--kep-weight-semibold);
+        flex-shrink: 0;
+    }
+
+    .kep-avatar--sm {
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: var(--kep-text-2xs);
+    }
+
+    .kep-avatar-stack {
+        display: inline-flex;
+    }
+
+    .kep-avatar-stack > .kep-avatar {
+        box-shadow: 0 0 0 2px var(--kep-surface);
+    }
+
+    .kep-avatar-stack > .kep-avatar + .kep-avatar {
+        margin-left: -0.5rem;
+    }
+
+    /* ── Card / panel ───────────────────────────────────────────── */
+    .kep-card {
+        background: var(--kep-surface);
+        border: var(--kep-border-width) solid var(--kep-border);
+        border-radius: var(--kep-radius-lg);
+        min-width: 0;
+    }
+
+    .kep-card__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--kep-space-3);
+        padding: var(--kep-space-4) var(--kep-card-pad);
+        border-bottom: var(--kep-border-width) solid var(--kep-border);
+    }
+
+    .kep-card__body {
+        padding: var(--kep-card-pad);
+    }
+
+    .kep-card__footer {
+        padding: var(--kep-space-3) var(--kep-card-pad);
+        border-top: var(--kep-border-width) solid var(--kep-border);
+        background: var(--kep-surface-sunken);
+        border-radius: 0 0 var(--kep-radius-lg) var(--kep-radius-lg);
+    }
+
+    .kep-card--interactive {
+        transition:
+            border-color var(--kep-duration-fast),
+            box-shadow var(--kep-duration-base) var(--kep-ease-standard);
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .kep-card--interactive:hover {
+        border-color: var(--kep-border-strong);
+        box-shadow: var(--kep-shadow-md);
+    }
+
+    /* ── KPI stat ───────────────────────────────────────────────── */
+    .kep-stat {
+        display: grid;
+        gap: var(--kep-space-1);
+        padding: var(--kep-card-pad);
+    }
+
+    .kep-stat__label {
+        font-size: var(--kep-text-xs);
+        font-weight: var(--kep-weight-medium);
+        color: var(--kep-text-subtle);
+    }
+
+    .kep-stat__value {
+        font-size: var(--kep-text-3xl);
+        font-weight: var(--kep-weight-semibold);
+        letter-spacing: var(--kep-tracking-tight);
+        line-height: 1.1;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .kep-stat__unit {
+        font-size: var(--kep-text-lg);
+        font-weight: var(--kep-weight-medium);
+        color: var(--kep-text-subtle);
+        margin-left: 2px;
+    }
+
+    .kep-stat__delta {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        font-size: var(--kep-text-xs);
+        font-weight: var(--kep-weight-medium);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .kep-stat__delta--up {
+        color: var(--kep-success);
+    }
+
+    .kep-stat__delta--down {
+        color: var(--kep-danger);
+    }
+
+    /* ── Progress ───────────────────────────────────────────────── */
+    .kep-progress {
+        --value: 0;
+        --_fill: var(--kep-primary);
+
+        height: 6px;
+        border-radius: var(--kep-radius-pill);
+        background: var(--kep-track);
+        overflow: hidden;
+    }
+
+    .kep-progress::after {
+        content: '';
+        display: block;
+        height: 100%;
+        width: calc(var(--value) * 1%);
+        background: var(--_fill);
+        border-radius: inherit;
+        transition: width var(--kep-duration-slow) var(--kep-ease-standard);
+    }
+
+    .kep-progress--success {
+        --_fill: var(--kep-success);
+    }
+
+    .kep-progress--warning {
+        --_fill: var(--kep-warning);
+    }
+
+    .kep-progress--danger {
+        --_fill: var(--kep-danger);
+    }
+
+    .kep-progress--lg {
+        height: 10px;
+    }
+
+    .kep-ring {
+        --value: 0;
+        --_fill: var(--kep-primary);
+        --size: 3rem;
+
+        width: var(--size);
+        height: var(--size);
+        border-radius: 50%;
+        background:
+            radial-gradient(closest-side, var(--kep-surface) 78%, transparent 79%),
+            conic-gradient(var(--_fill) calc(var(--value) * 1%), var(--kep-track) 0);
+        display: grid;
+        place-items: center;
+        font-size: var(--kep-text-xs);
+        font-weight: var(--kep-weight-semibold);
+        font-variant-numeric: tabular-nums;
+        flex-shrink: 0;
+    }
+
+    /* ── Alert / banner ─────────────────────────────────────────── */
+    .kep-alert {
+        --_bg: var(--kep-info-subtle);
+        --_bd: var(--kep-info-border);
+        --_accent: var(--kep-info);
+
+        display: flex;
+        gap: var(--kep-space-3);
+        padding: var(--kep-space-3) var(--kep-space-4);
+        border: var(--kep-border-width) solid var(--_bd);
+        border-radius: var(--kep-radius-md);
+        background: var(--_bg);
+        color: var(--kep-text);
+        font-size: var(--kep-text-sm);
+    }
+
+    .kep-alert > .kep-icon {
+        color: var(--_accent);
+        margin-top: 0.125rem;
+    }
+
+    .kep-alert__title {
+        font-weight: var(--kep-weight-semibold);
+    }
+
+    .kep-alert--success {
+        --_bg: var(--kep-success-subtle);
+        --_bd: var(--kep-success-border);
+        --_accent: var(--kep-success);
+    }
+
+    .kep-alert--warning {
+        --_bg: var(--kep-warning-subtle);
+        --_bd: var(--kep-warning-border);
+        --_accent: var(--kep-warning);
+    }
+
+    .kep-alert--danger {
+        --_bg: var(--kep-danger-subtle);
+        --_bd: var(--kep-danger-border);
+        --_accent: var(--kep-danger);
+    }
+
+    /* ── Toast ──────────────────────────────────────────────────── */
+    .kep-toast {
+        display: flex;
+        align-items: center;
+        gap: var(--kep-space-3);
+        padding: var(--kep-space-3) var(--kep-space-4);
+        border-radius: var(--kep-radius-md);
+        background: var(--kep-surface-inverse);
+        color: var(--kep-text-inverse);
+        box-shadow: var(--kep-shadow-lg);
+        font-size: var(--kep-text-sm);
+        max-width: 26rem;
+    }
+
+    /* ── Tabs ───────────────────────────────────────────────────── */
+    .kep-tabs {
+        display: flex;
+        gap: var(--kep-space-5);
+        border-bottom: var(--kep-border-width) solid var(--kep-border);
+        overflow-x: auto;
+    }
+
+    .kep-tab {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--kep-space-1-5);
+        padding-block: var(--kep-space-3);
+        border: 0;
+        background: none;
+        color: var(--kep-text-subtle);
+        font: inherit;
+        font-weight: var(--kep-weight-medium);
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .kep-tab:hover {
+        color: var(--kep-text);
+    }
+
+    .kep-tab[aria-selected='true'] {
+        color: var(--kep-text);
+    }
+
+    .kep-tab[aria-selected='true']::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+        height: 2px;
+        background: var(--kep-primary);
+    }
+
+    .kep-tab__count {
+        padding: 1px 6px;
+        border-radius: var(--kep-radius-pill);
+        background: var(--kep-bg-subtle);
+        font-size: var(--kep-text-2xs);
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* ── Breadcrumb ─────────────────────────────────────────────── */
+    .kep-breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--kep-space-1-5);
+        font-size: var(--kep-text-xs);
+        color: var(--kep-text-subtle);
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .kep-breadcrumb a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .kep-breadcrumb a:hover {
+        color: var(--kep-text);
+        text-decoration: underline;
+    }
+
+    .kep-breadcrumb li + li::before {
+        content: '/';
+        margin-right: var(--kep-space-1-5);
+        color: var(--kep-text-disabled);
+    }
+
+    .kep-breadcrumb [aria-current='page'] {
+        color: var(--kep-text);
+        font-weight: var(--kep-weight-medium);
+    }
+
+    /* ── Data table ─────────────────────────────────────────────── */
+    .kep-table-wrap {
+        overflow-x: auto;
+        border: var(--kep-border-width) solid var(--kep-border);
+        border-radius: var(--kep-radius-lg);
+        background: var(--kep-surface);
+    }
+
+    .kep-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: var(--kep-text-sm);
+    }
+
+    .kep-table th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        height: 2.5rem;
+        padding-inline: var(--kep-space-4);
+        background: var(--kep-surface-sunken);
+        border-bottom: var(--kep-border-width) solid var(--kep-border);
+        color: var(--kep-text-subtle);
+        font-size: var(--kep-text-xs);
+        font-weight: var(--kep-weight-medium);
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .kep-table td {
+        height: var(--kep-table-row-h);
+        padding-inline: var(--kep-space-4);
+        border-bottom: var(--kep-border-width) solid var(--kep-border);
+        vertical-align: middle;
+    }
+
+    .kep-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .kep-table tbody tr:hover td {
+        background: color-mix(in oklab, var(--kep-bg-subtle) 60%, transparent);
+    }
+
+    .kep-table tbody tr[aria-selected='true'] td {
+        background: var(--kep-primary-subtle);
+    }
+
+    .kep-table .is-num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .kep-table th[aria-sort] {
+        cursor: pointer;
+    }
+
+    .kep-table th[aria-sort='ascending']::after {
+        content: ' ↑';
+    }
+
+    .kep-table th[aria-sort='descending']::after {
+        content: ' ↓';
+    }
+
+    .kep-table-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--kep-space-2);
+        padding: var(--kep-space-3) var(--kep-space-4);
+        border-bottom: var(--kep-border-width) solid var(--kep-border);
+    }
+
+    /* ── Pagination ─────────────────────────────────────────────── */
+    .kep-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--kep-space-3);
+        padding: var(--kep-space-3) var(--kep-space-4);
+        font-size: var(--kep-text-xs);
+        color: var(--kep-text-subtle);
+    }
+
+    .kep-pagination__pages {
+        display: flex;
+        gap: var(--kep-space-1);
+    }
+
+    .kep-pagination__page {
+        min-width: var(--kep-control-h-sm);
+        height: var(--kep-control-h-sm);
+        border: var(--kep-border-width) solid transparent;
+        border-radius: var(--kep-radius-sm);
+        background: none;
+        color: var(--kep-text-muted);
+        font: inherit;
+        font-variant-numeric: tabular-nums;
+        cursor: pointer;
+    }
+
+    .kep-pagination__page:hover {
+        background: var(--kep-bg-subtle);
+    }
+
+    .kep-pagination__page[aria-current='page'] {
+        border-color: var(--kep-border-strong);
+        background: var(--kep-surface);
+        color: var(--kep-text);
+        font-weight: var(--kep-weight-semibold);
+    }
+
+    /* ── Empty state ────────────────────────────────────────────── */
+    .kep-empty {
+        display: grid;
+        justify-items: center;
+        gap: var(--kep-space-2);
+        padding: var(--kep-space-12) var(--kep-space-6);
+        text-align: center;
+        color: var(--kep-text-subtle);
+    }
+
+    .kep-empty__icon {
+        display: grid;
+        place-items: center;
+        width: 3rem;
+        height: 3rem;
+        margin-bottom: var(--kep-space-2);
+        border-radius: var(--kep-radius-lg);
+        background: var(--kep-bg-subtle);
+        color: var(--kep-text-muted);
+    }
+
+    .kep-empty__title {
+        font-size: var(--kep-text-md);
+        font-weight: var(--kep-weight-semibold);
+        color: var(--kep-text);
+    }
+
+    /* ── Modal / dialog ─────────────────────────────────────────── */
+    .kep-dialog {
+        width: min(32rem, calc(100vw - 2rem));
+        padding: 0;
+        border: var(--kep-border-width) solid var(--kep-border);
+        border-radius: var(--kep-radius-lg);
+        background: var(--kep-surface-raised);
+        color: var(--kep-text);
+        box-shadow: var(--kep-shadow-lg);
+    }
+
+    .kep-dialog::backdrop {
+        background: var(--kep-overlay);
+    }
+
+    .kep-dialog__header {
+        padding: var(--kep-space-5) var(--kep-space-6) var(--kep-space-2);
+    }
+
+    .kep-dialog__body {
+        padding: 0 var(--kep-space-6) var(--kep-space-5);
+        color: var(--kep-text-muted);
+    }
+
+    .kep-dialog__footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--kep-space-2);
+        padding: var(--kep-space-4) var(--kep-space-6);
+        border-top: var(--kep-border-width) solid var(--kep-border);
+    }
+
+    /* ── Tooltip (CSS-only, for short labels) ───────────────────── */
+    [data-tooltip] {
+        position: relative;
+    }
+
+    [data-tooltip]::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: calc(100% + 6px);
+        left: 50%;
+        translate: -50% 4px;
+        z-index: var(--kep-z-tooltip);
+        padding: var(--kep-space-1) var(--kep-space-2);
+        border-radius: var(--kep-radius-sm);
+        background: var(--kep-surface-inverse);
+        color: var(--kep-text-inverse);
+        font-size: var(--kep-text-xs);
+        font-weight: var(--kep-weight-regular);
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition:
+            opacity var(--kep-duration-fast),
+            translate var(--kep-duration-fast);
+    }
+
+    [data-tooltip]:hover::after,
+    [data-tooltip]:focus-visible::after {
+        opacity: 1;
+        translate: -50% 0;
+    }
+
+    /* ── App shell ──────────────────────────────────────────────── */
+    .kep-shell {
+        display: grid;
+        grid-template-columns: var(--kep-sidebar-width) minmax(0, 1fr);
+        grid-template-rows: var(--kep-topbar-height) minmax(0, 1fr);
+        grid-template-areas:
+            'brand topbar'
+            'nav main';
+        min-height: 100%;
+        background: var(--kep-bg);
+    }
+
+    .kep-shell__brand {
+        grid-area: brand;
+        display: flex;
+        align-items: center;
+        gap: var(--kep-space-2);
+        padding-inline: var(--kep-space-4);
+        background: var(--kep-surface);
+        border-right: var(--kep-border-width) solid var(--kep-border);
+        border-bottom: var(--kep-border-width) solid var(--kep-border);
+    }
+
+    .kep-shell__topbar {
+        grid-area: topbar;
+        display: flex;
+        align-items: center;
+        gap: var(--kep-space-3);
+        padding-inline: var(--kep-space-6);
+        background: var(--kep-surface);
+        border-bottom: var(--kep-border-width) solid var(--kep-border);
+        min-width: 0;
+    }
+
+    .kep-shell__nav {
+        grid-area: nav;
+        display: flex;
+        flex-direction: column;
+        gap: var(--kep-space-5);
+        padding: var(--kep-space-4) var(--kep-space-3);
+        background: var(--kep-surface);
+        border-right: var(--kep-border-width) solid var(--kep-border);
+        overflow-y: auto;
+    }
+
+    .kep-shell__main {
+        grid-area: main;
+        padding: var(--kep-space-6);
+        min-width: 0;
+    }
+
+    @media (max-width: 56rem) {
+        .kep-shell {
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-rows: var(--kep-topbar-height) auto minmax(0, 1fr);
+            grid-template-areas:
+                'brand'
+                'nav'
+                'main';
+        }
+
+        .kep-shell__topbar {
+            display: none;
+        }
+
+        .kep-shell__nav {
+            flex-direction: row;
+            overflow-x: auto;
+            border-right: 0;
+            border-bottom: var(--kep-border-width) solid var(--kep-border);
+            padding-block: var(--kep-space-2);
+        }
+
+        .kep-shell__nav .kep-nav__heading {
+            display: none;
+        }
+
+        .kep-shell__nav .kep-nav {
+            flex-direction: row;
+        }
+
+        .kep-shell__main {
+            padding: var(--kep-space-4);
+        }
+    }
+
+    .kep-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .kep-nav__heading {
+        padding: 0 var(--kep-space-3) var(--kep-space-1);
+    }
+
+    .kep-nav__item {
+        display: flex;
+        align-items: center;
+        gap: var(--kep-space-2-5);
+        height: var(--kep-control-h);
+        padding-inline: var(--kep-space-3);
+        border-radius: var(--kep-radius-md);
+        color: var(--kep-text-muted);
+        font-weight: var(--kep-weight-medium);
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .kep-nav__item:hover {
+        background: var(--kep-bg-subtle);
+        color: var(--kep-text);
+    }
+
+    .kep-nav__item[aria-current='page'] {
+        background: var(--kep-primary-subtle);
+        color: var(--kep-primary-subtle-fg);
+    }
+
+    .kep-nav__item .kep-badge {
+        margin-left: auto;
+    }
+
+    /* ── Course outline (modules with sequential unlock) ────────── */
+    .kep-outline {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+    }
+
+    .kep-outline__item {
+        display: grid;
+        grid-template-columns: 2rem minmax(0, 1fr) auto;
+        gap: var(--kep-space-3);
+        align-items: start;
+        padding: var(--kep-space-3) var(--kep-space-4);
+        border-top: var(--kep-border-width) solid var(--kep-border);
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .kep-outline__item:first-child {
+        border-top: 0;
+    }
+
+    a.kep-outline__item:hover {
+        background: var(--kep-bg-subtle);
+    }
+
+    .kep-outline__marker {
+        display: grid;
+        place-items: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 50%;
+        border: 1.5px solid var(--kep-border-strong);
+        color: var(--kep-text-subtle);
+        font-size: var(--kep-text-xs);
+        font-weight: var(--kep-weight-semibold);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .kep-outline__item[data-state='done'] .kep-outline__marker {
+        border-color: var(--kep-success);
+        background: var(--kep-success);
+        color: var(--kep-text-inverse);
+    }
+
+    .kep-outline__item[data-state='current'] .kep-outline__marker {
+        border-color: var(--kep-primary);
+        color: var(--kep-primary);
+        box-shadow: 0 0 0 3px var(--kep-primary-subtle);
+    }
+
+    .kep-outline__item[data-state='locked'] {
+        color: var(--kep-text-disabled);
+        cursor: not-allowed;
+    }
+
+    .kep-outline__item[data-state='locked'] .kep-outline__marker {
+        border-style: dashed;
+        color: var(--kep-text-disabled);
+    }
+
+    .kep-outline__title {
+        font-weight: var(--kep-weight-medium);
+    }
+
+    /* ── Quiz answer option ─────────────────────────────────────── */
+    .kep-option {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--kep-space-3);
+        padding: var(--kep-space-3) var(--kep-space-4);
+        border: var(--kep-border-width) solid var(--kep-border-strong);
+        border-radius: var(--kep-radius-md);
+        background: var(--kep-surface);
+        cursor: pointer;
+        transition:
+            border-color var(--kep-duration-fast),
+            background-color var(--kep-duration-fast);
+    }
+
+    .kep-option:hover {
+        border-color: var(--kep-text-subtle);
+    }
+
+    .kep-option input {
+        margin: 0.2rem 0 0;
+        accent-color: var(--kep-primary);
+    }
+
+    .kep-option:has(input:checked) {
+        border-color: var(--kep-primary);
+        background: var(--kep-primary-subtle);
+    }
+
+    .kep-option[data-result='correct'] {
+        border-color: var(--kep-success);
+        background: var(--kep-success-subtle);
+    }
+
+    .kep-option[data-result='incorrect'] {
+        border-color: var(--kep-danger);
+        background: var(--kep-danger-subtle);
+    }
+
+    /* ── Filter chip ────────────────────────────────────────────── */
+    .kep-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--kep-space-1-5);
+        height: var(--kep-control-h-sm);
+        padding-inline: var(--kep-space-3);
+        border: var(--kep-border-width) solid var(--kep-border-strong);
+        border-radius: var(--kep-radius-pill);
+        background: var(--kep-surface);
+        color: var(--kep-text-muted);
+        font: inherit;
+        font-size: var(--kep-text-xs);
+        font-weight: var(--kep-weight-medium);
+        cursor: pointer;
+    }
+
+    .kep-chip:hover {
+        border-color: var(--kep-text-subtle);
+        color: var(--kep-text);
+    }
+
+    .kep-chip[aria-pressed='true'] {
+        border-color: var(--kep-primary);
+        background: var(--kep-primary-subtle);
+        color: var(--kep-primary-subtle-fg);
+    }
+
+    /* ── Divider / description list ─────────────────────────────── */
+    .kep-divider {
+        height: 1px;
+        border: 0;
+        background: var(--kep-border);
+        margin: 0;
+    }
+
+    .kep-dl {
+        display: grid;
+        grid-template-columns: max-content minmax(0, 1fr);
+        gap: var(--kep-space-2) var(--kep-space-6);
+        margin: 0;
+        font-size: var(--kep-text-sm);
+    }
+
+    .kep-dl dt {
+        color: var(--kep-text-subtle);
+    }
+
+    .kep-dl dd {
+        margin: 0;
+        font-variant-numeric: tabular-nums;
+    }
+}

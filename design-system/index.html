@@ -1,0 +1,963 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Skill K.E.P Design System</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/components.css">
+<style>
+    /* Preview page only. Layout: sticky table of contents on the left, documentation column on the right. */
+    html, body { background: var(--kep-bg); color: var(--kep-text); }
+    body { margin: 0; }
+    * { box-sizing: border-box; }
+
+    .ds { display: grid; grid-template-columns: 14rem minmax(0, 1fr); min-height: 100vh; }
+    .ds-toc {
+        position: sticky; top: env(safe-area-inset-top, 0px); align-self: start; height: 100vh; overflow-y: auto;
+        padding: var(--kep-space-6) var(--kep-space-4);
+        border-right: 1px solid var(--kep-border); background: var(--kep-surface);
+        display: flex; flex-direction: column; gap: var(--kep-space-6);
+    }
+    .ds-toc nav { display: grid; gap: 2px; }
+    .ds-toc a { color: var(--kep-text-muted); text-decoration: none; padding: 6px 10px; border-radius: var(--kep-radius-md); font-weight: 500; }
+    .ds-toc a:hover { background: var(--kep-bg-subtle); color: var(--kep-text); }
+    .ds-toc .ds-toc__group { display: grid; gap: 2px; }
+    .ds-toc .ds-toc__group .kep-overline { padding: 0 10px 4px; }
+
+    .ds-main {
+        padding-block: var(--kep-space-10) var(--kep-space-16);
+        padding-left: max(var(--kep-space-10), env(safe-area-inset-left, 0px));
+        padding-right: max(var(--kep-space-10), env(safe-area-inset-right, 0px));
+        max-width: 76rem; min-width: 0;
+        display: grid; gap: var(--kep-space-16);
+    }
+
+    .ds-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -0.01em; font-size: 15px; }
+    .ds-brand small { display: block; font-weight: 400; font-size: 11px; color: var(--kep-text-subtle); letter-spacing: 0; }
+    .ds-mark { width: 28px; height: 28px; flex-shrink: 0; }
+    .ds-mark rect { fill: var(--kep-primary); }
+    .ds-mark path { stroke: var(--kep-primary-fg); stroke-width: 2.4; stroke-linecap: round; fill: none; }
+
+    .ds-hero { display: grid; gap: var(--kep-space-5); }
+    .ds-hero h1 { font-size: clamp(2rem, 4vw, 2.75rem); line-height: 1.1; letter-spacing: -0.025em; font-weight: 600; margin: 0; text-wrap: balance; max-width: 20ch; }
+    .ds-hero p { font-size: var(--kep-text-md); line-height: 1.6; color: var(--kep-text-muted); max-width: 62ch; margin: 0; }
+
+    .ds-controls { display: flex; flex-wrap: wrap; gap: var(--kep-space-4) var(--kep-space-6); padding: var(--kep-space-4); border: 1px solid var(--kep-border); border-radius: var(--kep-radius-lg); background: var(--kep-surface); }
+    .ds-control { display: grid; gap: 6px; }
+    .ds-swatch-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+    .ds-section { display: grid; gap: var(--kep-space-6); scroll-margin-top: var(--kep-space-6); }
+    .ds-section > header { display: grid; gap: var(--kep-space-2); max-width: 64ch; }
+    .ds-section > header h2 { font-size: var(--kep-text-2xl); letter-spacing: var(--kep-tracking-tight); margin: 0; font-weight: 600; }
+    .ds-section > header p { margin: 0; color: var(--kep-text-muted); font-size: 15px; line-height: 1.6; }
+    .ds-sub { display: grid; gap: var(--kep-space-3); }
+    .ds-sub > h3 { margin: 0; font-size: var(--kep-text-md); font-weight: 600; }
+    .ds-sub > p { margin: 0; color: var(--kep-text-muted); max-width: 64ch; }
+
+    .ds-grid { display: grid; gap: var(--kep-space-4); }
+    .ds-grid--2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
+    .ds-grid--3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
+    .ds-grid--4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); }
+
+    .ds-principle { padding: var(--kep-space-5); display: grid; gap: var(--kep-space-2); align-content: start; }
+    .ds-principle h3 { margin: 0; font-size: var(--kep-text-md); font-weight: 600; }
+    .ds-principle p { margin: 0; color: var(--kep-text-muted); }
+    .ds-principle .kep-icon { width: 20px; height: 20px; color: var(--kep-primary); }
+
+    .ds-scale { display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); border-radius: var(--kep-radius-lg); overflow: hidden; border: 1px solid var(--kep-border); }
+    .ds-scale--ink { grid-template-columns: repeat(14, minmax(0, 1fr)); }
+    .ds-scale > div { height: 4.5rem; padding: 8px 6px; display: flex; flex-direction: column; justify-content: flex-end; font-size: 10px; font-family: var(--kep-font-mono); line-height: 1.3; }
+    @media (max-width: 40rem) {
+        .ds-scale, .ds-scale--ink { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+
+    .ds-sw { display: grid; gap: 8px; }
+    .ds-sw__chip { height: 3.5rem; border-radius: var(--kep-radius-md); border: 1px solid var(--kep-border); }
+    .ds-sw__name { font-size: 12px; font-weight: 500; }
+    .ds-sw__var { font-family: var(--kep-font-mono); font-size: 11px; color: var(--kep-text-subtle); word-break: break-all; }
+
+    .ds-code { font-family: var(--kep-font-mono); font-size: 12px; color: var(--kep-text-muted); background: var(--kep-bg-subtle); padding: 1px 5px; border-radius: var(--kep-radius-sm); }
+    .ds-pre { margin: 0; font-family: var(--kep-font-mono); font-size: 12.5px; line-height: 1.6; padding: var(--kep-space-4); background: var(--kep-surface-sunken); border: 1px solid var(--kep-border); border-radius: var(--kep-radius-lg); overflow-x: auto; color: var(--kep-text-muted); }
+
+    .ds-type-row { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: var(--kep-space-4); align-items: baseline; padding-block: var(--kep-space-3); border-top: 1px solid var(--kep-border); }
+    .ds-type-row:first-child { border-top: 0; }
+    @media (max-width: 40rem) { .ds-type-row { grid-template-columns: 1fr; gap: 4px; } }
+
+    .ds-demo { padding: var(--kep-space-5); display: flex; flex-wrap: wrap; gap: var(--kep-space-3); align-items: center; }
+    .ds-demo--stack { flex-direction: column; align-items: stretch; }
+
+    .ds-space-row { display: flex; align-items: center; gap: var(--kep-space-3); font-size: 12px; }
+    .ds-space-row span:first-child { width: 7rem; font-family: var(--kep-font-mono); color: var(--kep-text-subtle); }
+    .ds-space-bar { height: 10px; background: var(--kep-primary); border-radius: 2px; opacity: 0.85; }
+
+    .ds-elev { height: 6rem; border-radius: var(--kep-radius-lg); background: var(--kep-surface); border: 1px solid var(--kep-border); display: grid; place-items: center; font-size: 12px; color: var(--kep-text-muted); font-family: var(--kep-font-mono); }
+
+    /* Pattern frames */
+    .ds-frame { border: 1px solid var(--kep-border-strong); border-radius: var(--kep-radius-lg); overflow: hidden; background: var(--kep-bg); box-shadow: var(--kep-shadow-md); }
+    .ds-frame .kep-shell { min-height: 0; }
+    .ds-frame .kep-shell__nav { min-height: 34rem; }
+    @media (max-width: 56rem) { .ds-frame .kep-shell__nav { min-height: 0; } }
+
+    .ds-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--kep-space-3); }
+    .ds-row--between { justify-content: space-between; }
+    .ds-stack { display: grid; gap: var(--kep-space-4); min-width: 0; }
+    .ds-stack--sm { gap: var(--kep-space-2); }
+    .ds-muted { color: var(--kep-text-muted); }
+    .ds-subtle { color: var(--kep-text-subtle); }
+
+    .ds-continue { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--kep-space-4); align-items: center; padding: var(--kep-card-pad); }
+    @media (max-width: 40rem) { .ds-continue { grid-template-columns: auto minmax(0, 1fr); } .ds-continue > .kep-btn { grid-column: 1 / -1; } }
+
+    .ds-course-cover { aspect-ratio: 16 / 7; max-width: 100%; border-radius: var(--kep-radius-lg) var(--kep-radius-lg) 0 0; position: relative; overflow: hidden; border-bottom: 1px solid var(--kep-border); }
+    .ds-course-cover svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .ds-course-cover .kep-badge { position: absolute; top: 10px; left: 10px; }
+
+    .ds-due { list-style: none; margin: 0; padding: 0; display: grid; }
+    .ds-due li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--kep-space-3); align-items: center; padding: var(--kep-space-3) var(--kep-card-pad); border-top: 1px solid var(--kep-border); }
+    .ds-due li:first-child { border-top: 0; }
+    .ds-due .ds-due__title { font-weight: 500; }
+
+    .ds-bars { display: grid; gap: var(--kep-space-3); position: relative; }
+    .ds-bar { display: grid; grid-template-columns: 7rem minmax(0, 1fr) 3rem; gap: var(--kep-space-3); align-items: center; font-size: 13px; }
+    .ds-bar__track { position: relative; height: 14px; background: var(--kep-track); border-radius: 3px; }
+    .ds-bar__fill { position: absolute; inset: 0 auto 0 0; border-radius: 3px; background: var(--kep-chart-1); }
+    .ds-bar__fill.is-below { background: color-mix(in oklab, var(--kep-chart-1) 45%, var(--kep-track)); }
+    .ds-bar__target { position: absolute; top: -4px; bottom: -4px; width: 0; border-left: 2px dashed var(--kep-text); left: 80%; }
+    .ds-legend { display: flex; flex-wrap: wrap; gap: var(--kep-space-4); font-size: 12px; color: var(--kep-text-subtle); }
+    .ds-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .ds-legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; }
+
+    .ds-quiz { max-width: 44rem; }
+    .ds-timer { font-family: var(--kep-font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+
+    .ds-dialog-static { position: static; display: block; margin: 0 auto; width: 100%; max-width: 32rem; }
+
+    @media (max-width: 56rem) {
+        .ds { grid-template-columns: minmax(0, 1fr); }
+        .ds-toc { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--kep-border); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+        .ds-toc nav, .ds-toc .ds-toc__group { display: flex; flex-wrap: wrap; }
+        .ds-toc .ds-toc__group .kep-overline { width: 100%; }
+        .ds-main { padding-block: var(--kep-space-8) var(--kep-space-12); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); gap: var(--kep-space-12); }
+    }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+        <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+        <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+        <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
+        <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+        <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+        <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+        <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+        <symbol id="i-play" viewBox="0 0 24 24"><path d="m6 3 14 9-14 9z"/></symbol>
+        <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></symbol>
+        <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+        <symbol id="i-filter" viewBox="0 0 24 24"><path d="M22 3H2l8 9.46V19l4 2v-8.54z"/></symbol>
+        <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></symbol>
+        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+        <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+        <symbol id="i-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></symbol>
+        <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+        <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></symbol>
+        <symbol id="i-building" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></symbol>
+        <symbol id="i-trend" viewBox="0 0 24 24"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+        <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol>
+        <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></symbol>
+        <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12"/><circle cx="12" cy="12" r="3"/></symbol>
+        <symbol id="i-palette" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 1 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.3A5.6 5.6 0 0 0 22 9.8C22 5.5 17.5 2 12 2"/></symbol>
+        <symbol id="i-mark" viewBox="0 0 28 28"><rect width="28" height="28" rx="6"/><path d="M8 20v-3M14 20v-7M20 20V9"/></symbol>
+    </defs>
+</svg>
+
+<div class="ds kep-root">
+    <aside class="ds-toc">
+        <div class="ds-brand">
+            <svg class="ds-mark" viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="6"/><path d="M8 20v-3M14 20v-7M20 20V9"/></svg>
+            <div>Skill K.E.P<small>Design System · v0.1</small></div>
+        </div>
+        <div class="ds-toc__group">
+            <span class="kep-overline">Alapok</span>
+            <a href="#alapelvek">Alapelvek</a>
+            <a href="#szinek">Színek</a>
+            <a href="#tipografia">Tipográfia</a>
+            <a href="#ter">Tér, forma, mélység</a>
+        </div>
+        <div class="ds-toc__group">
+            <span class="kep-overline">Elemek</span>
+            <a href="#komponensek">Komponensek</a>
+        </div>
+        <div class="ds-toc__group">
+            <span class="kep-overline">Minták</span>
+            <a href="#tanuloi-iranyitopult">Tanulói irányítópult</a>
+            <a href="#katalogus">Kurzuskatalógus</a>
+            <a href="#kurzus">Kurzus és modulok</a>
+            <a href="#vezetoi">Vezetői nézet</a>
+            <a href="#admin">Admin: tanulók</a>
+            <a href="#teszt">Tesztkitöltés</a>
+        </div>
+        <div class="ds-toc__group">
+            <span class="kep-overline">Fejlesztés</span>
+            <a href="#hasznalat">Használat</a>
+        </div>
+    </aside>
+
+    <main class="ds-main">
+        <!-- ── Hero ─────────────────────────────────────────── -->
+        <section class="ds-hero">
+            <span class="kep-overline">Vállalati tanulási portál · Design System</span>
+            <h1>Nyugodt, adatközpontú felület a kötelező és fejlesztő képzésekhez</h1>
+            <p>A Skill K.E.P design system a tanulót, a csapatvezetőt és az adminisztrátort egyformán kiszolgálja. Három rétegre épül: alap skálák, szemantikus tokenek és üzemmódok (sötét téma, sűrűség, cégenkénti márkaszín). Minden komponens csak szemantikus tokent használ, így egy cég saját színe egyetlen skála felülírásával az egész felületen megjelenik.</p>
+            <div class="ds-controls" role="group" aria-label="Előnézet beállításai">
+                <div class="ds-control">
+                    <span class="kep-overline">Téma</span>
+                    <div class="kep-btn-group" data-control="theme">
+                        <button class="kep-btn kep-btn--sm" type="button" data-value="light">Világos</button>
+                        <button class="kep-btn kep-btn--sm" type="button" data-value="dark">Sötét</button>
+                        <button class="kep-btn kep-btn--sm" type="button" data-value="system" aria-pressed="true">Rendszer</button>
+                    </div>
+                </div>
+                <div class="ds-control">
+                    <span class="kep-overline">Sűrűség</span>
+                    <div class="kep-btn-group" data-control="density">
+                        <button class="kep-btn kep-btn--sm" type="button" data-value="comfortable" aria-pressed="true">Kényelmes</button>
+                        <button class="kep-btn kep-btn--sm" type="button" data-value="compact">Tömör</button>
+                    </div>
+                </div>
+                <div class="ds-control">
+                    <span class="kep-overline">Cég márkaszíne</span>
+                    <div class="kep-btn-group" data-control="tenant">
+                        <button class="kep-btn kep-btn--sm" type="button" data-value="petrol" aria-pressed="true"><i class="ds-swatch-dot" style="background:#0e6878"></i>Petrol (alap)</button>
+                        <button class="kep-btn kep-btn--sm" type="button" data-value="cobalt"><i class="ds-swatch-dot" style="background:#2c47bf"></i>Kobalt</button>
+                        <button class="kep-btn kep-btn--sm" type="button" data-value="plum"><i class="ds-swatch-dot" style="background:#86336f"></i>Szilva</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Principles ───────────────────────────────────── -->
+        <section class="ds-section" id="alapelvek">
+            <header>
+                <span class="kep-overline">01 · Alapok</span>
+                <h2>Alapelvek</h2>
+                <p>Egy vállalati tanulási rendszert naponta, munka közben használnak. A felület dolga, hogy a következő teendőt és a határidőket egyértelművé tegye, nem az, hogy szórakoztasson.</p>
+            </header>
+            <div class="ds-grid ds-grid--4">
+                <div class="kep-card ds-principle">
+                    <svg class="kep-icon"><use href="#i-calendar"/></svg>
+                    <h3>Határidő előre</h3>
+                    <p>A kötelező képzés és a lejárat mindig a legelső, ami látszik. Az állapot színben, ikonban és szövegben is megjelenik.</p>
+                </div>
+                <div class="kep-card ds-principle">
+                    <svg class="kep-icon"><use href="#i-chart"/></svg>
+                    <h3>Adat, nem dísz</h3>
+                    <p>Táblázatos számjegyek, egyértelmű mértékegységek, összesítés a részletek előtt. A vezető egy pillantással lássa a lemaradást.</p>
+                </div>
+                <div class="kep-card ds-principle">
+                    <svg class="kep-icon"><use href="#i-building"/></svg>
+                    <h3>Cégre szabható</h3>
+                    <p>Egy márkaskála felülírásával minden ügyfél a saját színében látja a portált. A kontrasztot a skála lépcsői garantálják.</p>
+                </div>
+                <div class="kep-card ds-principle">
+                    <svg class="kep-icon"><use href="#i-eye"/></svg>
+                    <h3>Mindenkinek olvasható</h3>
+                    <p>WCAG 2.1 AA kontraszt mindkét témában, látható fókusz, 44 px érintési cél mobilon, csökkentett mozgás támogatása.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Colour ───────────────────────────────────────── -->
+        <section class="ds-section" id="szinek">
+            <header>
+                <span class="kep-overline">02 · Alapok</span>
+                <h2>Színek</h2>
+                <p>A semleges „tinta” skála enyhén kékes-pala árnyalatú. Az alap márkaszín a petrol: komoly, nyugodt, és jól elkülönül a státuszszínektől. Az arany kizárólag eredményeket jelöl (tanúsítvány, teljesítés), soha nem gombot.</p>
+            </header>
+
+            <div class="ds-sub">
+                <h3>Márka skála <span class="ds-code">--kep-brand-*</span></h3>
+                <p>Ezt a skálát írja felül a cégenkénti téma. Világos témában a 600-as az elsődleges, sötétben a 400-as.</p>
+                <div class="ds-scale" id="brand-scale"></div>
+            </div>
+
+            <div class="ds-sub">
+                <h3>Tinta skála <span class="ds-code">--kep-ink-*</span></h3>
+                <div class="ds-scale ds-scale--ink" id="ink-scale"></div>
+            </div>
+
+            <div class="ds-sub">
+                <h3>Szemantikus tokenek</h3>
+                <p>A komponensek csak ezeket használják. A témaváltó ezek értékét cseréli, ezért a minták itt élőben követik a beállításokat.</p>
+                <div class="ds-grid ds-grid--4" id="semantic-swatches"></div>
+            </div>
+
+            <div class="ds-sub">
+                <h3>Adatvizualizáció <span class="ds-code">--kep-chart-1…6</span></h3>
+                <p>Kategorikus sorrend: az egymás melletti színek színtévesztők számára is megkülönböztethetők. Egy diagramon legfeljebb hat kategória, a többi „Egyéb” csoportba kerül.</p>
+                <div class="ds-grid ds-grid--4" id="chart-swatches"></div>
+            </div>
+        </section>
+
+        <!-- ── Typography ───────────────────────────────────── -->
+        <section class="ds-section" id="tipografia">
+            <header>
+                <span class="kep-overline">03 · Alapok</span>
+                <h2>Tipográfia</h2>
+                <p>IBM Plex Sans: üzleti, jól olvasható, teljes magyar ékezetkészlettel (ő, ű). Az alkalmazás alapmérete 14 px a sűrű felületekhez, a tananyag olvasónézete 16 px. Kódokhoz, azonosítókhoz és időzítőkhöz IBM Plex Mono.</p>
+            </header>
+            <div class="kep-card kep-card__body">
+                <div class="ds-type-row"><span class="kep-meta">3xl · 36 / 600</span><span style="font-size:var(--kep-text-3xl);font-weight:600;letter-spacing:-0.015em;line-height:1.1" class="kep-num">87,4 %</span></div>
+                <div class="ds-type-row"><span class="kep-meta">2xl · 28 / 600</span><span class="kep-page-title">Saját tanulásom</span></div>
+                <div class="ds-type-row"><span class="kep-meta">xl · 22 / 600</span><span style="font-size:var(--kep-text-xl);font-weight:600">Munkavédelmi alapismeretek 2026</span></div>
+                <div class="ds-type-row"><span class="kep-meta">lg · 18 / 600</span><span class="kep-section-title">Közelgő határidők</span></div>
+                <div class="ds-type-row"><span class="kep-meta">md · 16 / 400</span><span class="kep-prose">A tűzvédelmi oktatás célja, hogy minden munkavállaló ismerje a menekülési útvonalakat és a tűzoltó készülékek használatát.</span></div>
+                <div class="ds-type-row"><span class="kep-meta">sm · 14 / 400</span><span>Alapértelmezett felületi szöveg: táblázatok, űrlapok, listák.</span></div>
+                <div class="ds-type-row"><span class="kep-meta">xs · 12 / 400</span><span class="kep-meta">Utoljára módosítva: 2026. 11. 12. · Kovács Anna</span></div>
+                <div class="ds-type-row"><span class="kep-meta">2xs · 11 / 600</span><span class="kep-overline">Kötelező képzések</span></div>
+                <div class="ds-type-row"><span class="kep-meta">mono · 13 / 500</span><span style="font-family:var(--kep-font-mono);font-size:13px;font-weight:500">MV-2026-014 · 00:24:51</span></div>
+            </div>
+            <div class="ds-sub">
+                <h3>Írásmód</h3>
+                <p>Dátum: <span class="ds-code">2026. 12. 15.</span> (táblázatban) vagy <span class="ds-code">2026. dec. 15.</span> (szövegben). Százalék szóközzel: <span class="ds-code">87,4 %</span>. Időtartam: <span class="ds-code">45 perc</span>, <span class="ds-code">1 ó 20 p</span>. Nevek családnév elöl: <span class="ds-code">Kovács Anna</span>. Gombfelirat igével kezdődik: „Képzés indítása”, „Exportálás”.</p>
+            </div>
+        </section>
+
+        <!-- ── Space, shape, depth ──────────────────────────── -->
+        <section class="ds-section" id="ter">
+            <header>
+                <span class="kep-overline">04 · Alapok</span>
+                <h2>Tér, forma, mélység</h2>
+                <p>4 px-es rács. Visszafogott lekerekítés: a 6 px a vezérlőké, a 10 px a kártyáké. Árnyékot csak a lebegő elemek kapnak (menü, párbeszédablak, értesítés), a kártyákat keret választja el.</p>
+            </header>
+            <div class="ds-grid ds-grid--2">
+                <div class="kep-card kep-card__body ds-stack ds-stack--sm" id="space-scale"></div>
+                <div class="ds-stack">
+                    <div class="ds-grid ds-grid--4">
+                        <div class="ds-elev" style="border-radius:var(--kep-radius-sm)">radius-sm · 4</div>
+                        <div class="ds-elev" style="border-radius:var(--kep-radius-md)">radius-md · 6</div>
+                        <div class="ds-elev" style="border-radius:var(--kep-radius-lg)">radius-lg · 10</div>
+                        <div class="ds-elev" style="border-radius:var(--kep-radius-pill)">pill</div>
+                    </div>
+                    <div class="ds-grid ds-grid--4">
+                        <div class="ds-elev" style="box-shadow:var(--kep-shadow-xs)">shadow-xs</div>
+                        <div class="ds-elev" style="box-shadow:var(--kep-shadow-sm)">shadow-sm</div>
+                        <div class="ds-elev" style="box-shadow:var(--kep-shadow-md)">shadow-md</div>
+                        <div class="ds-elev" style="box-shadow:var(--kep-shadow-lg)">shadow-lg</div>
+                    </div>
+                    <div class="kep-card kep-card__body">
+                        <dl class="kep-dl">
+                            <dt>Vezérlő magasság</dt><dd><span class="ds-code">--kep-control-h</span> 36 px · tömör: 32 px</dd>
+                            <dt>Táblázatsor</dt><dd><span class="ds-code">--kep-table-row-h</span> 48 px · tömör: 36 px</dd>
+                            <dt>Oldalsáv</dt><dd><span class="ds-code">--kep-sidebar-width</span> 240 px</dd>
+                            <dt>Mozgás</dt><dd>120 / 200 / 320 ms · <span class="ds-code">ease-standard</span></dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Components ───────────────────────────────────── -->
+        <section class="ds-section" id="komponensek">
+            <header>
+                <span class="kep-overline">05 · Elemek</span>
+                <h2>Komponensek</h2>
+                <p>Keretrendszer-független CSS osztályok (<span class="ds-code">.kep-*</span>), amelyeket a Blade komponensek közvetlenül használhatnak. Az állapotot ARIA attribútumok hordozzák, így a stílus és az akadálymentesség nem válik el.</p>
+            </header>
+
+            <div class="ds-grid ds-grid--2">
+                <div class="kep-card">
+                    <div class="kep-card__header"><span class="kep-section-title">Gombok</span><span class="kep-meta">.kep-btn</span></div>
+                    <div class="ds-demo">
+                        <button class="kep-btn kep-btn--primary" type="button"><svg class="kep-icon"><use href="#i-play"/></svg>Képzés indítása</button>
+                        <button class="kep-btn" type="button">Mentés piszkozatként</button>
+                        <button class="kep-btn kep-btn--subtle" type="button"><svg class="kep-icon"><use href="#i-plus"/></svg>Hozzárendelés</button>
+                        <button class="kep-btn kep-btn--ghost" type="button">Mégse</button>
+                        <button class="kep-btn kep-btn--danger" type="button">Tanuló eltávolítása</button>
+                        <button class="kep-btn kep-btn--primary" type="button" disabled>Beküldés</button>
+                    </div>
+                    <div class="ds-demo" style="padding-top:0">
+                        <button class="kep-btn kep-btn--primary kep-btn--sm" type="button">Kicsi</button>
+                        <button class="kep-btn kep-btn--primary" type="button">Közepes</button>
+                        <button class="kep-btn kep-btn--primary kep-btn--lg" type="button">Nagy</button>
+                        <button class="kep-btn kep-btn--icon" type="button" aria-label="Exportálás" data-tooltip="Exportálás"><svg class="kep-icon"><use href="#i-download"/></svg></button>
+                        <button class="kep-btn kep-btn--icon kep-btn--ghost" type="button" aria-label="További műveletek" data-tooltip="További műveletek"><svg class="kep-icon"><use href="#i-more"/></svg></button>
+                    </div>
+                </div>
+
+                <div class="kep-card">
+                    <div class="kep-card__header"><span class="kep-section-title">Állapotjelzők</span><span class="kep-meta">.kep-badge</span></div>
+                    <div class="ds-demo">
+                        <span class="kep-badge kep-badge--danger kep-badge--dot">Lejárt</span>
+                        <span class="kep-badge kep-badge--warning kep-badge--dot">7 napon belül</span>
+                        <span class="kep-badge kep-badge--info kep-badge--dot">Folyamatban</span>
+                        <span class="kep-badge kep-badge--success kep-badge--dot">Teljesítve</span>
+                        <span class="kep-badge kep-badge--dot">Nincs elkezdve</span>
+                    </div>
+                    <div class="ds-demo" style="padding-top:0">
+                        <span class="kep-badge kep-badge--brand">Kötelező</span>
+                        <span class="kep-badge">Választható</span>
+                        <span class="kep-badge kep-badge--achievement"><svg class="kep-icon"><use href="#i-award"/></svg>Tanúsítvány</span>
+                        <span class="kep-badge"><svg class="kep-icon"><use href="#i-clock"/></svg>45 perc</span>
+                        <span class="kep-badge"><svg class="kep-icon"><use href="#i-lock"/></svg>Zárolt</span>
+                    </div>
+                </div>
+
+                <div class="kep-card">
+                    <div class="kep-card__header"><span class="kep-section-title">Űrlapelemek</span><span class="kep-meta">.kep-field</span></div>
+                    <div class="kep-card__body ds-stack">
+                        <div class="kep-field">
+                            <label class="kep-label" for="f-name">Teljes név<span class="kep-label__req" aria-hidden="true">*</span></label>
+                            <input class="kep-input" id="f-name" value="Szabó Eszter">
+                        </div>
+                        <div class="kep-field">
+                            <label class="kep-label" for="f-email">Céges e-mail-cím</label>
+                            <input class="kep-input" id="f-email" value="eszter.szabo@" aria-invalid="true" aria-describedby="f-email-err">
+                            <span class="kep-error" id="f-email-err"><svg class="kep-icon"><use href="#i-alert"/></svg>Adjon meg egy teljes e-mail-címet, például nev@ceg.hu.</span>
+                        </div>
+                        <div class="ds-grid ds-grid--2" style="gap:var(--kep-space-4)">
+                            <div class="kep-field">
+                                <label class="kep-label" for="f-dept">Szervezeti egység</label>
+                                <select class="kep-select" id="f-dept"><option>Pénzügy</option><option>Értékesítés</option><option>Logisztika</option></select>
+                            </div>
+                            <div class="kep-field">
+                                <label class="kep-label" for="f-due">Határidő</label>
+                                <input class="kep-input" id="f-due" type="date" value="2026-12-15">
+                            </div>
+                        </div>
+                        <div class="kep-field">
+                            <label class="kep-label" for="f-search">Keresés</label>
+                            <div class="kep-input-group"><svg class="kep-icon"><use href="#i-search"/></svg><input class="kep-input" id="f-search" placeholder="Kurzus, tanuló vagy azonosító"></div>
+                            <span class="kep-hint">Legalább 2 karakter.</span>
+                        </div>
+                        <div class="ds-row">
+                            <label class="kep-check"><input type="checkbox" id="f-c1" checked>Értesítés e-mailben</label>
+                            <label class="kep-switch"><input type="checkbox" id="f-s1" checked>Sorrendben teljesítendő modulok</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ds-stack">
+                    <div class="kep-card">
+                        <div class="kep-card__header"><span class="kep-section-title">Haladás</span><span class="kep-meta">.kep-progress · .kep-ring</span></div>
+                        <div class="kep-card__body ds-stack">
+                            <div class="ds-stack ds-stack--sm">
+                                <div class="ds-row ds-row--between"><span>Adatvédelem és GDPR</span><span class="kep-num ds-muted">3 / 5 modul</span></div>
+                                <div class="kep-progress" style="--value:60" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" aria-label="Adatvédelem és GDPR haladás"></div>
+                            </div>
+                            <div class="ds-stack ds-stack--sm">
+                                <div class="ds-row ds-row--between"><span>Munkavédelem 2026</span><span class="kep-num ds-muted">100 %</span></div>
+                                <div class="kep-progress kep-progress--success" style="--value:100" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="Munkavédelem haladás"></div>
+                            </div>
+                            <div class="ds-row">
+                                <div class="kep-ring" style="--value:72">72%</div>
+                                <div class="kep-ring" style="--value:100;--_fill:var(--kep-success)"><svg class="kep-icon" style="color:var(--kep-success)"><use href="#i-check"/></svg></div>
+                                <div class="kep-ring" style="--value:18;--_fill:var(--kep-danger)">18%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kep-card">
+                        <div class="kep-card__header"><span class="kep-section-title">Navigáció</span><span class="kep-meta">.kep-tabs · .kep-breadcrumb</span></div>
+                        <div class="kep-card__body ds-stack">
+                            <ol class="kep-breadcrumb"><li><a href="#kurzus">Kurzusok</a></li><li><a href="#kurzus">Információbiztonság</a></li><li aria-current="page">2. modul</li></ol>
+                            <div class="kep-tabs" role="tablist">
+                                <button class="kep-tab" role="tab" aria-selected="true" type="button">Folyamatban <span class="kep-tab__count">3</span></button>
+                                <button class="kep-tab" role="tab" aria-selected="false" type="button">Kötelező <span class="kep-tab__count">5</span></button>
+                                <button class="kep-tab" role="tab" aria-selected="false" type="button">Teljesített</button>
+                            </div>
+                            <div class="ds-row">
+                                <button class="kep-chip" type="button" aria-pressed="true">Kötelező</button>
+                                <button class="kep-chip" type="button">Vezetőképzés</button>
+                                <button class="kep-chip" type="button">IT-biztonság</button>
+                                <button class="kep-chip" type="button">Nyelv</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kep-card">
+                    <div class="kep-card__header"><span class="kep-section-title">Visszajelzés</span><span class="kep-meta">.kep-alert · .kep-toast</span></div>
+                    <div class="kep-card__body ds-stack">
+                        <div class="kep-alert kep-alert--warning"><svg class="kep-icon"><use href="#i-alert"/></svg><div><div class="kep-alert__title">2 kötelező képzés határideje 7 napon belül lejár</div>Munkavédelem 2026 (dec. 1.), Etikai kódex (dec. 3.)</div></div>
+                        <div class="kep-alert kep-alert--success"><svg class="kep-icon"><use href="#i-check-circle"/></svg><div><div class="kep-alert__title">Sikeres teszt: 92 %</div>A tanúsítvány letölthető, 2027. 11. 18-ig érvényes.</div></div>
+                        <div class="kep-alert kep-alert--danger"><svg class="kep-icon"><use href="#i-x-circle"/></svg><div><div class="kep-alert__title">A CSV importálása nem sikerült</div>A 14. sorban hiányzik az e-mail-cím. Javítsa a fájlt, majd töltse fel újra.</div></div>
+                        <div class="kep-alert"><svg class="kep-icon"><use href="#i-info"/></svg><div>A 3. modul a 2. modul tesztjének teljesítése után nyílik meg.</div></div>
+                        <div class="kep-toast"><svg class="kep-icon"><use href="#i-check"/></svg><span>12 tanuló hozzárendelve a kurzushoz.</span><button class="kep-btn kep-btn--sm kep-btn--ghost" type="button" style="margin-left:auto;color:inherit">Visszavonás</button></div>
+                    </div>
+                </div>
+
+                <div class="ds-stack">
+                    <div class="kep-card">
+                        <div class="kep-card__header"><span class="kep-section-title">Párbeszédablak</span><span class="kep-meta">.kep-dialog</span></div>
+                        <div class="kep-card__body" style="background:var(--kep-overlay);border-radius:0 0 var(--kep-radius-lg) var(--kep-radius-lg)">
+                            <div class="kep-dialog ds-dialog-static" role="dialog" aria-labelledby="dlg-t">
+                                <div class="kep-dialog__header"><span class="kep-section-title" id="dlg-t">Beküldi a tesztet?</span></div>
+                                <div class="kep-dialog__body">Beküldés után a válaszok nem módosíthatók. 2 kérdésre még nem válaszolt.</div>
+                                <div class="kep-dialog__footer"><button class="kep-btn kep-btn--ghost" type="button">Vissza a teszthez</button><button class="kep-btn kep-btn--primary" type="button">Beküldés</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kep-card">
+                        <div class="kep-card__header"><span class="kep-section-title">Üres állapot</span><span class="kep-meta">.kep-empty</span></div>
+                        <div class="kep-empty">
+                            <div class="kep-empty__icon"><svg class="kep-icon" style="width:22px;height:22px"><use href="#i-book"/></svg></div>
+                            <div class="kep-empty__title">Még nincs hozzárendelt képzése</div>
+                            <div>Ha a vezetője kurzust rendel Önhöz, itt jelenik meg. Addig böngésszen a katalógusban.</div>
+                            <button class="kep-btn kep-btn--subtle" type="button" style="margin-top:var(--kep-space-2)">Katalógus megnyitása</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Pattern: learner dashboard ───────────────────── -->
+        <section class="ds-section" id="tanuloi-iranyitopult">
+            <header>
+                <span class="kep-overline">06 · Minta</span>
+                <h2>Tanulói irányítópult</h2>
+                <p>Az első képernyő egy kérdésre válaszol: mit kell most csinálnom? Elöl a félbehagyott képzés folytatása, mellette a határidős kötelező tételek, alatta a teljes lista.</p>
+            </header>
+            <div class="ds-frame">
+                <div class="kep-shell">
+                    <div class="kep-shell__brand ds-brand">
+                        <svg class="ds-mark" viewBox="0 0 28 28" aria-hidden="true"><rect width="28" height="28" rx="6"/><path d="M8 20v-3M14 20v-7M20 20V9"/></svg>
+                        <div>Mintavállalat Zrt.<small>Skill K.E.P</small></div>
+                    </div>
+                    <div class="kep-shell__topbar">
+                        <div class="kep-input-group" style="max-width:22rem;flex:1"><svg class="kep-icon"><use href="#i-search"/></svg><input class="kep-input" id="tb-search" placeholder="Keresés a képzések között"></div>
+                        <div style="margin-left:auto" class="ds-row">
+                            <button class="kep-btn kep-btn--icon kep-btn--ghost" type="button" aria-label="Értesítések"><svg class="kep-icon"><use href="#i-bell"/></svg></button>
+                            <span class="kep-avatar">VD</span>
+                        </div>
+                    </div>
+                    <nav class="kep-shell__nav" aria-label="Fő navigáció">
+                        <div class="kep-nav">
+                            <a class="kep-nav__item" href="#tanuloi-iranyitopult" aria-current="page"><svg class="kep-icon"><use href="#i-home"/></svg>Saját tanulásom</a>
+                            <a class="kep-nav__item" href="#katalogus"><svg class="kep-icon"><use href="#i-book"/></svg>Katalógus</a>
+                            <a class="kep-nav__item" href="#tanuloi-iranyitopult"><svg class="kep-icon"><use href="#i-award"/></svg>Tanúsítványaim</a>
+                        </div>
+                        <div class="kep-nav">
+                            <span class="kep-nav__heading kep-overline">Vezetőként</span>
+                            <a class="kep-nav__item" href="#vezetoi"><svg class="kep-icon"><use href="#i-users"/></svg>Csapatom<span class="kep-badge kep-badge--danger">4</span></a>
+                            <a class="kep-nav__item" href="#vezetoi"><svg class="kep-icon"><use href="#i-chart"/></svg>Riportok</a>
+                        </div>
+                    </nav>
+                    <div class="kep-shell__main ds-stack" style="gap:var(--kep-space-6)">
+                        <div class="ds-row ds-row--between">
+                            <div class="ds-stack ds-stack--sm">
+                                <h1 class="kep-page-title">Jó reggelt, Dóra</h1>
+                                <span class="ds-muted">2 kötelező képzés vár Önre ebben a hónapban.</span>
+                            </div>
+                            <span class="kep-meta">Utolsó belépés: 2026. 11. 17. 16:42</span>
+                        </div>
+
+                        <div class="ds-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr))">
+                            <div class="kep-card">
+                                <div class="kep-card__header"><span class="kep-overline">Folytatás</span><span class="kep-badge kep-badge--brand">Kötelező</span></div>
+                                <div class="ds-continue">
+                                    <div class="kep-ring" style="--value:60;--size:3.5rem">60%</div>
+                                    <div class="ds-stack ds-stack--sm">
+                                        <strong style="font-size:var(--kep-text-md)">Adatvédelem és GDPR alapok</strong>
+                                        <span class="kep-meta">4. modul: Adatvédelmi incidens kezelése · kb. 15 perc</span>
+                                    </div>
+                                    <button class="kep-btn kep-btn--primary" type="button"><svg class="kep-icon"><use href="#i-play"/></svg>Folytatás</button>
+                                </div>
+                            </div>
+                            <div class="kep-card">
+                                <div class="kep-card__header"><span class="kep-overline">Közelgő határidők</span><a class="kep-link kep-meta" href="#tanuloi-iranyitopult">Összes</a></div>
+                                <ul class="ds-due">
+                                    <li><div><div class="ds-due__title">Munkavédelmi alapismeretek 2026</div><div class="kep-meta">Határidő: 2026. 12. 01.</div></div><span class="kep-badge kep-badge--warning kep-badge--dot">13 nap</span></li>
+                                    <li><div><div class="ds-due__title">Etikai kódex és megfelelés</div><div class="kep-meta">Határidő: 2026. 12. 03.</div></div><span class="kep-badge kep-badge--warning kep-badge--dot">15 nap</span></li>
+                                    <li><div><div class="ds-due__title">Információbiztonság: adathalászat</div><div class="kep-meta">Határidő: 2027. 01. 31.</div></div><span class="kep-badge kep-badge--dot">74 nap</span></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="ds-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,9rem),1fr))">
+                            <div class="kep-card kep-stat"><span class="kep-stat__label">Folyamatban</span><span class="kep-stat__value">3</span><span class="kep-meta">ebből 2 kötelező</span></div>
+                            <div class="kep-card kep-stat"><span class="kep-stat__label">Teljesítve 2026-ban</span><span class="kep-stat__value">11</span><span class="kep-stat__delta kep-stat__delta--up"><svg class="kep-icon"><use href="#i-trend"/></svg>+4 tavalyhoz képest</span></div>
+                            <div class="kep-card kep-stat"><span class="kep-stat__label">Tanulási idő</span><span class="kep-stat__value">14<span class="kep-stat__unit">ó 20 p</span></span><span class="kep-meta">az idei évben</span></div>
+                            <div class="kep-card kep-stat"><span class="kep-stat__label">Érvényes tanúsítvány</span><span class="kep-stat__value" style="color:var(--kep-achievement-fg)">6</span><span class="kep-meta">1 lejár 30 napon belül</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Pattern: catalogue ───────────────────────────── -->
+        <section class="ds-section" id="katalogus">
+            <header>
+                <span class="kep-overline">07 · Minta</span>
+                <h2>Kurzuskatalógus</h2>
+                <p>Kártyarács szűrőkkel. A kártya minden esetben ugyanazt a négy adatot mutatja ugyanott: típus, cím, időigény és modulszám, valamint a saját haladás, ha van.</p>
+            </header>
+            <div class="ds-row ds-row--between">
+                <div class="ds-row">
+                    <button class="kep-chip" type="button" aria-pressed="true">Mind <span class="kep-num">24</span></button>
+                    <button class="kep-chip" type="button">Kötelező <span class="kep-num">6</span></button>
+                    <button class="kep-chip" type="button">Vezetőképzés <span class="kep-num">5</span></button>
+                    <button class="kep-chip" type="button">IT-biztonság <span class="kep-num">4</span></button>
+                    <button class="kep-chip" type="button">Szakmai <span class="kep-num">9</span></button>
+                </div>
+                <div class="ds-row">
+                    <select class="kep-select" id="cat-sort" aria-label="Rendezés" style="width:auto"><option>Legújabb elöl</option><option>Határidő szerint</option><option>Név szerint</option></select>
+                </div>
+            </div>
+            <div class="ds-grid" id="catalogue" style="grid-template-columns:repeat(auto-fill,minmax(min(100%,17rem),1fr))"></div>
+        </section>
+
+        <!-- ── Pattern: course + modules ────────────────────── -->
+        <section class="ds-section" id="kurzus">
+            <header>
+                <span class="kep-overline">08 · Minta</span>
+                <h2>Kurzus és modulok</h2>
+                <p>A modulok sorrendje és zárolása a meglévő learning_platform logikáját követi (előfeltétel modul, sorrendi teljesítés). Az állapot a jelölő formájában is látszik: pipa, kiemelt kör, szaggatott keret.</p>
+            </header>
+            <div class="ds-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));align-items:start">
+                <div class="kep-card" style="grid-column:span 1">
+                    <div class="kep-card__header" style="align-items:flex-start;flex-direction:column;gap:var(--kep-space-3)">
+                        <ol class="kep-breadcrumb"><li><a href="#katalogus">Katalógus</a></li><li aria-current="page">Információbiztonság</li></ol>
+                        <div class="ds-stack ds-stack--sm">
+                            <h3 class="kep-page-title" style="font-size:var(--kep-text-xl)">Információbiztonság: adathalászat felismerése</h3>
+                            <div class="ds-row"><span class="kep-badge kep-badge--brand">Kötelező</span><span class="kep-badge"><svg class="kep-icon"><use href="#i-clock"/></svg>1 ó 10 p</span><span class="kep-badge"><svg class="kep-icon"><use href="#i-layers"/></svg>5 modul</span><span class="kep-badge kep-badge--achievement"><svg class="kep-icon"><use href="#i-award"/></svg>Tanúsítvány</span></div>
+                        </div>
+                        <div class="ds-stack ds-stack--sm" style="width:100%">
+                            <div class="ds-row ds-row--between"><span class="kep-meta">Haladás</span><span class="kep-meta kep-num">2 / 5 modul · 40 %</span></div>
+                            <div class="kep-progress" style="--value:40"></div>
+                        </div>
+                    </div>
+                    <ol class="kep-outline">
+                        <li><a class="kep-outline__item" href="#kurzus" data-state="done"><span class="kep-outline__marker"><svg class="kep-icon"><use href="#i-check"/></svg></span><span class="ds-stack ds-stack--sm"><span class="kep-outline__title">Mi az adathalászat?</span><span class="kep-meta">2 anyag · teszt: 100 %</span></span><span class="kep-meta kep-num">12 p</span></a></li>
+                        <li><a class="kep-outline__item" href="#kurzus" data-state="done"><span class="kep-outline__marker"><svg class="kep-icon"><use href="#i-check"/></svg></span><span class="ds-stack ds-stack--sm"><span class="kep-outline__title">Gyanús e-mailek jelei</span><span class="kep-meta">3 anyag · teszt: 85 %</span></span><span class="kep-meta kep-num">18 p</span></a></li>
+                        <li><a class="kep-outline__item" href="#kurzus" data-state="current"><span class="kep-outline__marker">3</span><span class="ds-stack ds-stack--sm"><span class="kep-outline__title">Hivatkozások és mellékletek ellenőrzése</span><span class="kep-meta">2 anyag · teszt</span></span><button class="kep-btn kep-btn--primary kep-btn--sm" type="button">Folytatás</button></a></li>
+                        <li><div class="kep-outline__item" data-state="locked" data-tooltip="A 3. modul tesztje után nyílik meg"><span class="kep-outline__marker">4</span><span class="ds-stack ds-stack--sm"><span class="kep-outline__title">Incidens bejelentése</span><span class="kep-meta">1 anyag · teszt</span></span><svg class="kep-icon"><use href="#i-lock"/></svg></div></li>
+                        <li><div class="kep-outline__item" data-state="locked"><span class="kep-outline__marker">5</span><span class="ds-stack ds-stack--sm"><span class="kep-outline__title">Záróteszt</span><span class="kep-meta">20 kérdés · min. 80 %</span></span><svg class="kep-icon"><use href="#i-lock"/></svg></div></li>
+                    </ol>
+                </div>
+                <div class="kep-card">
+                    <div class="kep-card__header"><span class="kep-section-title">Kurzus adatai</span></div>
+                    <div class="kep-card__body ds-stack">
+                        <dl class="kep-dl">
+                            <dt>Azonosító</dt><dd style="font-family:var(--kep-font-mono)">IB-2026-03</dd>
+                            <dt>Hozzárendelte</dt><dd>Tóth Gergely (HR)</dd>
+                            <dt>Határidő</dt><dd>2027. 01. 31.</dd>
+                            <dt>Sikeresség</dt><dd>legalább 80 % a záróteszten</dd>
+                            <dt>Tanúsítvány</dt><dd>12 hónapig érvényes</dd>
+                            <dt>Kreditpont</dt><dd>2 pont</dd>
+                        </dl>
+                        <hr class="kep-divider">
+                        <div class="kep-alert"><svg class="kep-icon"><use href="#i-info"/></svg><div>A modulokat sorrendben kell teljesíteni. A következő modul a teszt sikeres kitöltése után nyílik meg.</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Pattern: manager ─────────────────────────────── -->
+        <section class="ds-section" id="vezetoi">
+            <header>
+                <span class="kep-overline">09 · Minta</span>
+                <h2>Vezetői nézet: megfelelőség</h2>
+                <p>Összesítés a részletek előtt. A KPI-sor után a szervezeti egységenkénti teljesítés látszik a 80 %-os célvonallal, majd a beavatkozást igénylő munkatársak listája.</p>
+            </header>
+            <div class="ds-grid ds-grid--4">
+                <div class="kep-card kep-stat"><span class="kep-stat__label">Kötelező képzések teljesítése</span><span class="kep-stat__value">76,8<span class="kep-stat__unit">%</span></span><span class="kep-stat__delta kep-stat__delta--up"><svg class="kep-icon"><use href="#i-trend"/></svg>+5,2 pont 30 nap alatt</span></div>
+                <div class="kep-card kep-stat"><span class="kep-stat__label">Lejárt határidő</span><span class="kep-stat__value" style="color:var(--kep-danger)">14</span><span class="kep-meta">9 munkatársnál</span></div>
+                <div class="kep-card kep-stat"><span class="kep-stat__label">Aktív tanulók (30 nap)</span><span class="kep-stat__value">182<span class="kep-stat__unit">/ 214</span></span><span class="kep-meta">85 %</span></div>
+                <div class="kep-card kep-stat"><span class="kep-stat__label">Átlagos tesztpontszám</span><span class="kep-stat__value">84<span class="kep-stat__unit">%</span></span><span class="kep-stat__delta kep-stat__delta--down">−1 pont 30 nap alatt</span></div>
+            </div>
+            <div class="ds-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,24rem),1fr));align-items:start">
+                <div class="kep-card">
+                    <div class="kep-card__header"><span class="kep-section-title">Teljesítés szervezeti egységenként</span><span class="kep-meta">kötelező képzések, %</span></div>
+                    <div class="kep-card__body ds-stack">
+                        <div class="ds-bars" id="dept-bars"></div>
+                        <div class="ds-legend"><span><i style="background:var(--kep-chart-1)"></i>Cél felett</span><span><i style="background:color-mix(in oklab, var(--kep-chart-1) 45%, var(--kep-track))"></i>Cél alatt</span><span><i style="border-left:2px dashed var(--kep-text);width:0;height:12px;border-radius:0"></i>Cél: 80 %</span></div>
+                    </div>
+                </div>
+                <div class="kep-card">
+                    <div class="kep-card__header"><span class="kep-section-title">Beavatkozást igényel</span><button class="kep-btn kep-btn--sm" type="button"><svg class="kep-icon"><use href="#i-bell"/></svg>Emlékeztető küldése</button></div>
+                    <ul class="ds-due">
+                        <li><div class="ds-row" style="flex-wrap:nowrap;gap:var(--kep-space-3)"><span class="kep-avatar">HB</span><div><div class="ds-due__title">Horváth Bence</div><div class="kep-meta">Logisztika · Munkavédelem 2026</div></div></div><span class="kep-badge kep-badge--danger kep-badge--dot">12 napja lejárt</span></li>
+                        <li><div class="ds-row" style="flex-wrap:nowrap;gap:var(--kep-space-3)"><span class="kep-avatar">KM</span><div><div class="ds-due__title">Kiss Márton</div><div class="kep-meta">IT · Etikai kódex</div></div></div><span class="kep-badge kep-badge--danger kep-badge--dot">5 napja lejárt</span></li>
+                        <li><div class="ds-row" style="flex-wrap:nowrap;gap:var(--kep-space-3)"><span class="kep-avatar">NP</span><div><div class="ds-due__title">Nagy Péter</div><div class="kep-meta">Értékesítés · GDPR alapok</div></div></div><span class="kep-badge kep-badge--warning kep-badge--dot">2 nap</span></li>
+                        <li><div class="ds-row" style="flex-wrap:nowrap;gap:var(--kep-space-3)"><span class="kep-avatar">LR</span><div><div class="ds-due__title">Lakatos Réka</div><div class="kep-meta">Logisztika · Tűzvédelem</div></div></div><span class="kep-badge kep-badge--warning kep-badge--dot">4 nap</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Pattern: admin learners table ────────────────── -->
+        <section class="ds-section" id="admin">
+            <header>
+                <span class="kep-overline">10 · Minta</span>
+                <h2>Admin: tanulók kezelése</h2>
+                <p>Sűrű adattábla eszközsorral, tömeges művelettel és rendezéssel. A számoszlopok jobbra igazítottak, táblázatos számjegyekkel. Kis képernyőn a táblázat saját tárolójában görgethető.</p>
+            </header>
+            <div class="kep-table-wrap">
+                <div class="kep-table-toolbar">
+                    <div class="kep-input-group" style="flex:1;min-width:12rem;max-width:20rem"><svg class="kep-icon"><use href="#i-search"/></svg><input class="kep-input" id="tbl-search" placeholder="Név vagy e-mail"></div>
+                    <button class="kep-btn" type="button"><svg class="kep-icon"><use href="#i-filter"/></svg>Szűrők <span class="kep-badge kep-badge--brand">2</span></button>
+                    <span class="kep-meta" style="margin-left:auto">2 kijelölve</span>
+                    <button class="kep-btn" type="button">Kurzus hozzárendelése</button>
+                    <button class="kep-btn kep-btn--primary" type="button"><svg class="kep-icon"><use href="#i-plus"/></svg>Tanuló hozzáadása</button>
+                </div>
+                <table class="kep-table">
+                    <thead>
+                        <tr>
+                            <th style="width:2.5rem"><input type="checkbox" id="tbl-all" aria-label="Összes kijelölése"></th>
+                            <th aria-sort="ascending">Név</th>
+                            <th>Szervezeti egység</th>
+                            <th>Állapot</th>
+                            <th class="is-num">Kurzus</th>
+                            <th class="is-num">Teljesítés</th>
+                            <th>Utolsó aktivitás</th>
+                            <th style="width:3rem"><span class="kep-meta" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Műveletek</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="learners"></tbody>
+                </table>
+                <div class="kep-pagination">
+                    <span class="kep-num">1–6 / 214 tanuló</span>
+                    <div class="kep-pagination__pages">
+                        <button class="kep-pagination__page" type="button" aria-label="Előző oldal">‹</button>
+                        <button class="kep-pagination__page" type="button" aria-current="page">1</button>
+                        <button class="kep-pagination__page" type="button">2</button>
+                        <button class="kep-pagination__page" type="button">3</button>
+                        <button class="kep-pagination__page" type="button">…</button>
+                        <button class="kep-pagination__page" type="button">36</button>
+                        <button class="kep-pagination__page" type="button" aria-label="Következő oldal">›</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Pattern: test attempt ────────────────────────── -->
+        <section class="ds-section" id="teszt">
+            <header>
+                <span class="kep-overline">11 · Minta</span>
+                <h2>Tesztkitöltés</h2>
+                <p>Fókuszált nézet navigáció nélkül. Fent a haladás és a hátralévő idő, középen egy kérdés, lent az előre-hátra lépés. A kijelölt válasz kerettel és háttérrel is jelölt, kiértékelés után zöld vagy piros.</p>
+            </header>
+            <div class="ds-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));align-items:start">
+                <div class="kep-card ds-quiz">
+                    <div class="kep-card__header">
+                        <div class="ds-stack ds-stack--sm" style="flex:1">
+                            <div class="ds-row ds-row--between"><span class="kep-meta">7. kérdés / 20</span><span class="ds-timer ds-row" style="gap:6px"><svg class="kep-icon"><use href="#i-clock"/></svg>18:42</span></div>
+                            <div class="kep-progress" style="--value:35"></div>
+                        </div>
+                    </div>
+                    <div class="kep-card__body ds-stack">
+                        <span class="kep-overline">Egy helyes válasz</span>
+                        <strong style="font-size:var(--kep-text-md);line-height:1.45">Egy e-mail a pénzügyi igazgató nevében sürgős utalást kér egy új számlaszámra. Mi a helyes első lépés?</strong>
+                        <div class="ds-stack ds-stack--sm" role="radiogroup">
+                            <label class="kep-option"><input type="radio" name="q7" id="q7a">Elvégzem az utalást, mert sürgős.</label>
+                            <label class="kep-option"><input type="radio" name="q7" id="q7b" checked>Ismert, független csatornán (telefon) ellenőrzöm a kérést.</label>
+                            <label class="kep-option"><input type="radio" name="q7" id="q7c">Válaszolok az e-mailre, és megkérdezem, valódi-e.</label>
+                            <label class="kep-option"><input type="radio" name="q7" id="q7d">Továbbítom a kollégáimnak, hátha ők tudják.</label>
+                        </div>
+                    </div>
+                    <div class="kep-card__footer ds-row ds-row--between">
+                        <button class="kep-btn kep-btn--ghost" type="button">Előző</button>
+                        <button class="kep-btn kep-btn--primary" type="button">Következő kérdés</button>
+                    </div>
+                </div>
+                <div class="kep-card">
+                    <div class="kep-card__header"><span class="kep-section-title">Eredmény</span><span class="kep-badge kep-badge--success kep-badge--dot">Sikeres</span></div>
+                    <div class="kep-card__body ds-stack">
+                        <div class="ds-row" style="gap:var(--kep-space-4)">
+                            <div class="kep-ring" style="--value:85;--size:4.5rem;--_fill:var(--kep-success);font-size:var(--kep-text-md)">85%</div>
+                            <div class="ds-stack ds-stack--sm"><strong>17 / 20 helyes válasz</strong><span class="kep-meta">Elvárt: 80 % · Időtartam: 14 p 08 mp</span></div>
+                        </div>
+                        <hr class="kep-divider">
+                        <span class="kep-meta">2. kérdés · Igaz / hamis</span>
+                        <div class="kep-option" data-result="correct"><svg class="kep-icon" style="color:var(--kep-success);margin-top:2px"><use href="#i-check-circle"/></svg><span>Hamis: a bank soha nem kér jelszót e-mailben.</span></div>
+                        <span class="kep-meta">5. kérdés · Több helyes válasz</span>
+                        <div class="kep-option" data-result="incorrect"><svg class="kep-icon" style="color:var(--kep-danger);margin-top:2px"><use href="#i-x-circle"/></svg><span>A feladó neve megbízható jel. <span class="kep-meta">A feladó neve könnyen hamisítható.</span></span></div>
+                        <button class="kep-btn kep-btn--subtle" type="button"><svg class="kep-icon"><use href="#i-download"/></svg>Tanúsítvány letöltése (PDF)</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Usage ────────────────────────────────────────── -->
+        <section class="ds-section" id="hasznalat">
+            <header>
+                <span class="kep-overline">12 · Fejlesztés</span>
+                <h2>Használat</h2>
+                <p>A rendszer három CSS fájl. Tailwind v4 mellett a híd fájl a szemantikus tokeneket utility osztályként is elérhetővé teszi. A márkaszín cégenként a <span class="ds-code">&lt;html&gt;</span> elemen írható felül.</p>
+            </header>
+<pre class="ds-pre">/* resources/css/app.css */
+@import 'tailwindcss';
+@import '../../design-system/css/tokens.css';
+@import '../../design-system/css/components.css';
+@import '../../design-system/css/tailwind-theme.css';
+
+{{-- layouts/app.blade.php: cégenkénti márkaszín --}}
+&lt;html lang="hu" class="kep-root"
+      data-density="{{ $user-&gt;prefers_compact ? 'compact' : 'comfortable' }}"
+      style="{{ $company-&gt;brandCssVariables() }}"&gt;
+
+{{-- Tailwind utility a tokenekre --}}
+&lt;div class="bg-surface border border-border rounded-lg text-muted"&gt;…&lt;/div&gt;</pre>
+        </section>
+    </main>
+</div>
+
+<script>
+(function () {
+    var root = document.documentElement;
+
+    var tenants = {
+        petrol: null,
+        cobalt: { 50: '#eef2fe', 100: '#d9e2fc', 200: '#b4c5f8', 300: '#87a1f1', 400: '#6585ea', 500: '#3b5bdb', 600: '#2c47bf', 700: '#253a9b', 800: '#22337c', 900: '#1f2d63', 950: '#141c3d' },
+        plum: { 50: '#f9eff6', 100: '#f2dcec', 200: '#e5b8d9', 300: '#d690c4', 400: '#c46aab', 500: '#a14287', 600: '#86336f', 700: '#6d2a5b', 800: '#59254b', 900: '#4a2140', 950: '#2b1024' }
+    };
+    var steps = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+    var inkSteps = [0, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 850, 900, 950];
+
+    function store(key, value) { try { localStorage.setItem('kep-ds-' + key, value); } catch (e) {} }
+    function load(key) { try { return localStorage.getItem('kep-ds-' + key); } catch (e) { return null; } }
+
+    function setPressed(group, value) {
+        group.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.value === value)); });
+    }
+
+    var apply = {
+        theme: function (v) { if (v === 'system') { root.removeAttribute('data-theme'); } else { root.setAttribute('data-theme', v); } },
+        density: function (v) { root.setAttribute('data-density', v); },
+        tenant: function (v) {
+            steps.forEach(function (s) {
+                if (tenants[v]) { root.style.setProperty('--kep-brand-' + s, tenants[v][s]); } else { root.style.removeProperty('--kep-brand-' + s); }
+            });
+            renderScales();
+        }
+    };
+
+    document.querySelectorAll('[data-control]').forEach(function (group) {
+        var key = group.dataset.control;
+        var saved = load(key);
+        if (saved && group.querySelector('[data-value="' + saved + '"]')) { setPressed(group, saved); apply[key](saved); }
+        group.addEventListener('click', function (e) {
+            var btn = e.target.closest('button');
+            if (!btn) { return; }
+            setPressed(group, btn.dataset.value);
+            apply[key](btn.dataset.value);
+            store(key, btn.dataset.value);
+        });
+    });
+
+    function readVar(name) { return getComputedStyle(root).getPropertyValue(name).trim(); }
+    function lum(hex) {
+        var m = /^#?([0-9a-f]{6})$/i.exec(hex); if (!m) { return 0.5; }
+        var n = parseInt(m[1], 16), c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(function (x) { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); });
+        return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+    }
+
+    function scaleCells(el, prefix, list) {
+        el.innerHTML = list.map(function (s) {
+            var v = readVar('--kep-' + prefix + '-' + s);
+            var fg = lum(v) > 0.36 ? '#14181e' : '#ffffff';
+            return '<div style="background:' + v + ';color:' + fg + '"><strong>' + s + '</strong>' + v + '</div>';
+        }).join('');
+    }
+
+    function renderScales() {
+        scaleCells(document.getElementById('brand-scale'), 'brand', steps);
+        scaleCells(document.getElementById('ink-scale'), 'ink', inkSteps);
+    }
+
+    var semantic = [
+        ['Háttér', '--kep-bg'], ['Felület', '--kep-surface'], ['Keret', '--kep-border'], ['Szöveg', '--kep-text'],
+        ['Halvány szöveg', '--kep-text-muted'], ['Elsődleges', '--kep-primary'], ['Elsődleges, halvány', '--kep-primary-subtle'], ['Fókusz', '--kep-focus-ring'],
+        ['Siker', '--kep-success'], ['Figyelmeztetés', '--kep-warning'], ['Hiba', '--kep-danger'], ['Információ', '--kep-info'],
+        ['Eredmény (arany)', '--kep-achievement']
+    ];
+    document.getElementById('semantic-swatches').innerHTML = semantic.map(function (t) {
+        return '<div class="ds-sw"><div class="ds-sw__chip" style="background:var(' + t[1] + ')"></div><div><div class="ds-sw__name">' + t[0] + '</div><div class="ds-sw__var">' + t[1] + '</div></div></div>';
+    }).join('');
+
+    document.getElementById('chart-swatches').innerHTML = [1, 2, 3, 4, 5, 6].map(function (i) {
+        return '<div class="ds-sw"><div class="ds-sw__chip" style="background:var(--kep-chart-' + i + ')"></div><div class="ds-sw__var">--kep-chart-' + i + '</div></div>';
+    }).join('');
+
+    document.getElementById('space-scale').innerHTML = [['1', 4], ['2', 8], ['3', 12], ['4', 16], ['5', 20], ['6', 24], ['8', 32], ['10', 40], ['12', 48], ['16', 64]].map(function (s) {
+        return '<div class="ds-space-row"><span>space-' + s[0] + ' · ' + s[1] + '</span><span class="ds-space-bar" style="width:' + s[1] * 2.5 + 'px"></span></div>';
+    }).join('');
+
+    var courses = [
+        { t: 'Munkavédelmi alapismeretek 2026', type: 'Kötelező', min: '45 perc', mods: 4, prog: 100, hue: 1, status: ['success', 'Teljesítve'] },
+        { t: 'Adatvédelem és GDPR alapok', type: 'Kötelező', min: '1 ó 20 p', mods: 5, prog: 60, hue: 3, status: ['info', 'Folyamatban'] },
+        { t: 'Visszajelzés-adás vezetőknek', type: 'Vezetőképzés', min: '2 ó', mods: 6, prog: 0, hue: 4, status: null },
+        { t: 'Excel haladóknak: kimutatások', type: 'Szakmai', min: '3 ó 30 p', mods: 8, prog: 0, hue: 5, status: null },
+        { t: 'Etikai kódex és megfelelés', type: 'Kötelező', min: '30 perc', mods: 3, prog: 0, hue: 2, status: ['warning', 'Határidő: dec. 3.'] },
+        { t: 'Hatékony online megbeszélések', type: 'Szakmai', min: '50 perc', mods: 4, prog: 25, hue: 6, status: ['info', 'Folyamatban'] }
+    ];
+    function cover(i, seed) {
+        var c = 'var(--kep-chart-' + i + ')';
+        var rects = '';
+        for (var k = 0; k < 7; k++) {
+            var h = 18 + ((seed * 37 + k * 53) % 62);
+            rects += '<rect x="' + (14 + k * 26) + '" y="' + (100 - h) + '" width="16" height="' + h + '" rx="2" style="fill:' + c + ';opacity:' + (0.35 + k * 0.08) + '"/>';
+        }
+        return '<svg viewBox="0 0 200 100" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><rect width="200" height="100" style="fill:color-mix(in oklab, ' + c + ' 10%, var(--kep-surface))"/>' + rects + '</svg>';
+    }
+    document.getElementById('catalogue').innerHTML = courses.map(function (c, idx) {
+        var badgeCls = c.type === 'Kötelező' ? 'kep-badge--brand' : '';
+        var progress = c.prog > 0
+            ? '<div class="ds-stack ds-stack--sm"><div class="ds-row ds-row--between"><span class="kep-meta">Haladás</span><span class="kep-meta kep-num">' + c.prog + ' %</span></div><div class="kep-progress' + (c.prog === 100 ? ' kep-progress--success' : '') + '" style="--value:' + c.prog + '"></div></div>'
+            : '<div class="kep-meta">Még nem kezdte el</div>';
+        var status = c.status ? '<span class="kep-badge kep-badge--' + c.status[0] + ' kep-badge--dot">' + c.status[1] + '</span>' : '';
+        return '<a class="kep-card kep-card--interactive" href="#kurzus" style="display:flex;flex-direction:column">'
+            + '<div class="ds-course-cover">' + cover(c.hue, idx + 2) + '<span class="kep-badge ' + badgeCls + '">' + c.type + '</span></div>'
+            + '<div class="kep-card__body ds-stack" style="flex:1">'
+            + '<div class="ds-stack ds-stack--sm"><strong style="font-size:var(--kep-text-md);line-height:1.35">' + c.t + '</strong>'
+            + '<div class="ds-row" style="gap:var(--kep-space-2)"><span class="kep-meta ds-row" style="gap:4px"><svg class="kep-icon"><use href="#i-clock"/></svg>' + c.min + '</span><span class="kep-meta ds-row" style="gap:4px"><svg class="kep-icon"><use href="#i-layers"/></svg>' + c.mods + ' modul</span>' + status + '</div></div>'
+            + '<div style="margin-top:auto">' + progress + '</div></div></a>';
+    }).join('');
+
+    var depts = [['Pénzügy', 94], ['HR', 89], ['Értékesítés', 78], ['IT', 71], ['Logisztika', 58]];
+    document.getElementById('dept-bars').innerHTML = depts.map(function (d) {
+        return '<div class="ds-bar"><span>' + d[0] + '</span><div class="ds-bar__track"><div class="ds-bar__fill' + (d[1] < 80 ? ' is-below' : '') + '" style="width:' + d[1] + '%"></div><div class="ds-bar__target"></div></div><span class="kep-num" style="text-align:right;font-weight:500">' + d[1] + ' %</span></div>';
+    }).join('');
+
+    var learners = [
+        ['Horváth Bence', 'HB', 'Logisztika', ['danger', 'Lejárt'], 4, 38, '2026. 10. 29.', false],
+        ['Kovács Anna', 'KA', 'Pénzügy', ['success', 'Naprakész'], 6, 100, '2026. 11. 18.', true],
+        ['Lakatos Réka', 'LR', 'Logisztika', ['warning', 'Határidő közel'], 5, 62, '2026. 11. 15.', true],
+        ['Nagy Péter', 'NP', 'Értékesítés', ['warning', 'Határidő közel'], 5, 71, '2026. 11. 16.', false],
+        ['Szabó Eszter', 'SE', 'HR', ['success', 'Naprakész'], 7, 100, '2026. 11. 17.', false],
+        ['Varga Dóra', 'VD', 'Értékesítés', ['info', 'Folyamatban'], 5, 84, '2026. 11. 18.', false]
+    ];
+    document.getElementById('learners').innerHTML = learners.map(function (l, i) {
+        var fill = l[5] === 100 ? ' kep-progress--success' : (l[3][0] === 'danger' ? ' kep-progress--danger' : '');
+        return '<tr' + (l[7] ? ' aria-selected="true"' : '') + '>'
+            + '<td><input type="checkbox" id="row-' + i + '" aria-label="' + l[0] + ' kijelölése"' + (l[7] ? ' checked' : '') + '></td>'
+            + '<td><div class="ds-row" style="flex-wrap:nowrap;gap:var(--kep-space-2)"><span class="kep-avatar kep-avatar--sm">' + l[1] + '</span><span style="font-weight:500;white-space:nowrap">' + l[0] + '</span></div></td>'
+            + '<td class="ds-muted">' + l[2] + '</td>'
+            + '<td><span class="kep-badge kep-badge--' + l[3][0] + ' kep-badge--dot">' + l[3][1] + '</span></td>'
+            + '<td class="is-num">' + l[4] + '</td>'
+            + '<td class="is-num"><div class="ds-row" style="flex-wrap:nowrap;justify-content:flex-end;gap:var(--kep-space-2)"><div class="kep-progress' + fill + '" style="--value:' + l[5] + ';width:4rem"></div><span style="min-width:2.75rem">' + l[5] + ' %</span></div></td>'
+            + '<td class="ds-muted kep-num" style="white-space:nowrap">' + l[6] + '</td>'
+            + '<td><button class="kep-btn kep-btn--icon kep-btn--ghost kep-btn--sm" type="button" aria-label="Műveletek: ' + l[0] + '"><svg class="kep-icon"><use href="#i-more"/></svg></button></td>'
+            + '</tr>';
+    }).join('');
+
+    renderScales();
+    if (window.matchMedia) {
+        var mq = window.matchMedia('(prefers-color-scheme: dark)');
+        if (mq.addEventListener) { mq.addEventListener('change', renderScales); }
+    }
+})();
+</script>
+</body>
+</html>
