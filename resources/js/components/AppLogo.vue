@@ -2,18 +2,27 @@
 import { usePage } from '@inertiajs/vue3';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 
+withDefaults(
+    defineProps<{
+        /** Second line under the product name, e.g. the tenant (company) name. */
+        subtitle?: string;
+    }>(),
+    { subtitle: 'Vállalati tanulási portál' },
+);
+
 const name = usePage().props.name;
 </script>
 
 <template>
-    <div
-        class="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground"
-    >
-        <AppLogoIcon class="size-5 fill-current text-white dark:text-black" />
-    </div>
-    <div class="ml-1 grid flex-1 text-left text-sm">
-        <span class="mb-0.5 truncate leading-tight font-semibold">{{
-            name
-        }}</span>
+    <AppLogoIcon />
+    <div class="grid flex-1 text-left leading-tight">
+        <span
+            class="truncate text-[0.9375rem] font-semibold tracking-tight text-foreground"
+        >
+            {{ name }}
+        </span>
+        <span v-if="subtitle" class="truncate text-2xs text-subtle">
+            {{ subtitle }}
+        </span>
     </div>
 </template>

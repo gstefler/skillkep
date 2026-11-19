@@ -12,15 +12,15 @@ import type { NavItem } from '@/types';
 
 const sidebarNavItems: NavItem[] = [
     {
-        title: 'Profile',
+        title: 'Profil',
         href: editProfile(),
     },
     {
-        title: 'Security',
+        title: 'Biztonság',
         href: editSecurity(),
     },
     {
-        title: 'Appearance',
+        title: 'Megjelenés',
         href: editAppearance(),
     },
 ];
@@ -29,26 +29,29 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 </script>
 
 <template>
-    <div class="px-4 py-6">
+    <div>
         <Heading
-            title="Settings"
-            description="Manage your profile and account settings"
+            title="Beállítások"
+            description="Profil, biztonság és megjelenés kezelése"
         />
 
         <div class="flex flex-col lg:flex-row lg:space-x-12">
             <aside class="w-full max-w-xl lg:w-48">
-                <nav
-                    class="flex flex-col space-y-1 space-x-0"
-                    aria-label="Settings"
-                >
+                <nav class="flex flex-col gap-0.5" aria-label="Beállítások">
                     <Button
                         v-for="item in sidebarNavItems"
                         :key="toUrl(item.href)"
                         variant="ghost"
                         :class="[
                             'w-full justify-start',
-                            { 'bg-muted': isCurrentOrParentUrl(item.href) },
+                            {
+                                'bg-primary-subtle text-primary-subtle-foreground hover:bg-primary-subtle hover:text-primary-subtle-foreground':
+                                    isCurrentOrParentUrl(item.href),
+                            },
                         ]"
+                        :aria-current="
+                            isCurrentOrParentUrl(item.href) ? 'page' : undefined
+                        "
                         as-child
                     >
                         <Link :href="item.href">

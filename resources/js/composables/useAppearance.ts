@@ -10,23 +10,21 @@ export type UseAppearanceReturn = {
     updateAppearance: (value: Appearance) => void;
 };
 
+/**
+ * The design-system tokens switch on `data-theme` on <html>:
+ * "light" / "dark" force a theme, no attribute follows the OS preference.
+ */
 export function updateTheme(value: Appearance): void {
     if (typeof window === 'undefined') {
         return;
     }
 
-    if (value === 'system') {
-        const mediaQueryList = window.matchMedia(
-            '(prefers-color-scheme: dark)',
-        );
-        const systemTheme = mediaQueryList.matches ? 'dark' : 'light';
+    const root = document.documentElement;
 
-        document.documentElement.classList.toggle(
-            'dark',
-            systemTheme === 'dark',
-        );
+    if (value === 'system') {
+        root.removeAttribute('data-theme');
     } else {
-        document.documentElement.classList.toggle('dark', value === 'dark');
+        root.setAttribute('data-theme', value);
     }
 }
 
@@ -38,14 +36,6 @@ const setCookie = (name: string, value: string, days = 365) => {
     const maxAge = days * 24 * 60 * 60;
 
     document.cookie = `${name}=${value};path=/;max-age=${maxAge};SameSite=Lax`;
-};
-
-const mediaQuery = () => {
-    if (typeof window === 'undefined') {
-        return null;
-    }
-
-    return window.matchMedia('(prefers-color-scheme: dark)');
 };
 
 const getStoredAppearance = () => {
@@ -64,12 +54,6 @@ const prefersDark = (): boolean => {
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
 };
 
-const handleSystemThemeChange = () => {
-    const currentAppearance = getStoredAppearance();
-
-    updateTheme(currentAppearance || 'system');
-};
-
 export function initializeTheme(): void {
     if (typeof window === 'undefined') {
         return;
@@ -79,8 +63,7 @@ export function initializeTheme(): void {
     const savedAppearance = getStoredAppearance();
     updateTheme(savedAppearance || 'system');
 
-    // Set up system theme change listener...
-    mediaQuery()?.addEventListener('change', handleSystemThemeChange);
+    // "system" needs no listener: the tokens follow prefers-color-scheme in CSS.
 }
 
 const appearance = ref<Appearance>('system');

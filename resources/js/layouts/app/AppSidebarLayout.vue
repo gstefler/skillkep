@@ -20,8 +20,13 @@ withDefaults(defineProps<Props>(), {
         <AppSidebar />
         <AppContent variant="sidebar" class="min-w-0 overflow-x-clip">
             <AppSidebarHeader :breadcrumbs="breadcrumbs" />
-            <slot />
+            <!-- Main area: page background, max content width, .kep-shell__main padding -->
+            <div
+                class="mx-auto flex w-full max-w-(--kep-content-max) flex-1 flex-col gap-6 p-4 md:p-6"
+            >
+                <slot />
+            </div>
         </AppContent>
-        <Toaster />
+        <Toaster position="bottom-right" />
     </AppShell>
 </template>

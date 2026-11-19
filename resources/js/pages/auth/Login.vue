@@ -19,8 +19,8 @@ import PasskeyVerify from '@/components/PasskeyVerify.vue';
 
 defineOptions({
     layout: {
-        title: 'Log in to your account',
-        description: 'Enter your email and password below to log in',
+        title: 'Bejelentkezés',
+        description: 'Adja meg e-mail-címét és jelszavát a belépéshez.',
     },
 });
 
@@ -31,11 +31,11 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Log in" />
+    <Head title="Bejelentkezés" />
 
     <div
         v-if="status"
-        class="mb-4 text-center text-sm font-medium text-green-600"
+        class="mb-4 rounded-md border border-success-border bg-success-subtle px-3 py-2 text-sm font-medium text-success"
     >
         {{ status }}
     </div>
@@ -52,7 +52,7 @@ defineProps<{
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="email">Email address</Label>
+                <Label for="email">E-mail-cím</Label>
                 <Input
                     id="email"
                     type="email"
@@ -61,21 +61,21 @@ defineProps<{
                     v-focus
                     :tabindex="1"
                     autocomplete="email"
-                    placeholder="email@example.com"
+                    placeholder="nev@ceg.hu"
                 />
                 <InputError :message="errors.email" />
             </div>
 
             <div class="grid gap-2">
                 <div class="flex items-center justify-between">
-                    <Label for="password">Password</Label>
+                    <Label for="password">Jelszó</Label>
                     <TextLink
                         v-if="canResetPassword"
                         :href="request()"
                         class="text-sm"
                         :tabindex="5"
                     >
-                        Forgot your password?
+                        Elfelejtette a jelszavát?
                     </TextLink>
                 </div>
                 <PasswordInput
@@ -84,7 +84,7 @@ defineProps<{
                     required
                     :tabindex="2"
                     autocomplete="current-password"
-                    placeholder="Password"
+                    placeholder="Jelszó"
                 />
                 <InputError :message="errors.password" />
             </div>
@@ -92,7 +92,7 @@ defineProps<{
             <div class="flex items-center justify-between">
                 <Label for="remember" class="flex items-center space-x-3">
                     <Checkbox id="remember" name="remember" :tabindex="3" />
-                    <span>Remember me</span>
+                    <span>Emlékezzen rám</span>
                 </Label>
             </div>
 
@@ -104,14 +104,14 @@ defineProps<{
                 data-test="login-button"
             >
                 <Spinner v-if="processing" />
-                Log in
+                Bejelentkezés
             </Button>
         </div>
 
         <!-- @chisel-registration -->
         <div class="text-center text-sm text-muted-foreground">
-            Don't have an account?
-            <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
+            Még nincs fiókja?
+            <TextLink :href="register()" :tabindex="5">Regisztráció</TextLink>
         </div>
         <!-- @end-chisel-registration -->
     </Form>

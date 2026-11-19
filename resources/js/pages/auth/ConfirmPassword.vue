@@ -16,15 +16,15 @@ import PasskeyVerify from '@/components/PasskeyVerify.vue';
 
 defineOptions({
     layout: {
-        title: 'Confirm password',
+        title: 'Jelszó megerősítése',
         description:
-            'This is a secure area of the application. Please confirm your password before continuing.',
+            'Ez egy védett terület. A folytatáshoz erősítse meg a jelszavát.',
     },
 });
 </script>
 
 <template>
-    <Head title="Confirm password" />
+    <Head title="Jelszó megerősítése" />
 
     <!-- @chisel-passkeys -->
     <PasskeyVerify
@@ -32,9 +32,9 @@ defineOptions({
             options: confirmOptions(),
             submit: confirmStore(),
         }"
-        label="Confirm with passkey"
-        loading-label="Confirming..."
-        separator="Or confirm with password"
+        label="Megerősítés passkey-jel"
+        loading-label="Megerősítés…"
+        separator="Vagy jelszóval"
     />
     <!-- @end-chisel-passkeys -->
 
@@ -45,7 +45,7 @@ defineOptions({
     >
         <div class="space-y-6">
             <div class="grid gap-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Jelszó</Label>
                 <PasswordInput
                     id="password"
                     name="password"
@@ -65,7 +65,7 @@ defineOptions({
                     data-test="confirm-password-button"
                 >
                     <Spinner v-if="processing" />
-                    Confirm password
+                    Jelszó megerősítése
                 </Button>
             </div>
         </div>

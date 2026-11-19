@@ -11,9 +11,23 @@ export default defineConfig({
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.ts'],
             refresh: true,
+            // Design system type: IBM Plex Sans (UI) + IBM Plex Mono (IDs, timers).
+            // latin-ext is required for Hungarian ő / ű.
             fonts: [
-                bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
+                bunny('IBM Plex Sans', {
+                    weights: [400, 500, 600, 700],
+                    styles: ['normal', 'italic'],
+                    subsets: ['latin', 'latin-ext'],
+                    preload: [
+                        { weight: 400 },
+                        { weight: 500 },
+                        { weight: 600 },
+                    ],
+                }),
+                bunny('IBM Plex Mono', {
+                    weights: [400, 500],
+                    subsets: ['latin', 'latin-ext'],
+                    preload: false,
                 }),
             ],
         }),
@@ -44,6 +58,7 @@ export default defineConfig({
     },
     lint: {
         ignorePatterns: [
+            'design-system/**',
             'vendor/**',
             'node_modules/**',
             'public/**',
@@ -68,6 +83,7 @@ export default defineConfig({
         htmlWhitespaceSensitivity: 'css',
         ignorePatterns: [
             '.github/**',
+            'design-system/**',
             'composer.json',
             'resources/js/components/ui/*',
             'resources/views/mail/*',

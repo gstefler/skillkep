@@ -8,9 +8,9 @@ import { send } from '@/routes/verification';
 
 defineOptions({
     layout: {
-        title: 'Email verification',
+        title: 'E-mail-cím megerősítése',
         description:
-            'Please verify your email address by clicking on the link we just emailed to you.',
+            'Kattintson az e-mailben most elküldött linkre a cím megerősítéséhez.',
     },
 });
 
@@ -20,14 +20,14 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Email verification" />
+    <Head title="E-mail-cím megerősítése" />
 
     <div
         v-if="status === 'verification-link-sent'"
-        class="mb-4 text-center text-sm font-medium text-green-600"
+        class="mb-4 rounded-md border border-success-border bg-success-subtle px-3 py-2 text-sm font-medium text-success"
     >
-        A new verification link has been sent to the email address you provided
-        during registration.
+        Új megerősítő linket küldtünk a megadott e-mail-címre during
+        registration.
     </div>
 
     <Form
@@ -37,11 +37,11 @@ defineProps<{
     >
         <Button :disabled="processing" variant="secondary">
             <Spinner v-if="processing" />
-            Resend verification email
+            Megerősítő e-mail újraküldése
         </Button>
 
         <TextLink :href="logout()" as="button" class="mx-auto block text-sm">
-            Log out
+            Kijelentkezés
         </TextLink>
     </Form>
 </template>

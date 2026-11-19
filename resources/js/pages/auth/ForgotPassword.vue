@@ -11,8 +11,9 @@ import { email } from '@/routes/password';
 
 defineOptions({
     layout: {
-        title: 'Forgot password',
-        description: 'Enter your email to receive a password reset link',
+        title: 'Elfelejtett jelszó',
+        description:
+            'Adja meg e-mail-címét, és küldünk egy jelszó-visszaállító linket.',
     },
 });
 
@@ -22,11 +23,11 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Forgot password" />
+    <Head title="Elfelejtett jelszó" />
 
     <div
         v-if="status"
-        class="mb-4 text-center text-sm font-medium text-green-600"
+        class="mb-4 rounded-md border border-success-border bg-success-subtle px-3 py-2 text-sm font-medium text-success"
     >
         {{ status }}
     </div>
@@ -34,14 +35,14 @@ defineProps<{
     <div class="space-y-6">
         <Form v-bind="email.form()" v-slot="{ errors, processing }">
             <div class="grid gap-2">
-                <Label for="email">Email address</Label>
+                <Label for="email">E-mail-cím</Label>
                 <Input
                     id="email"
                     type="email"
                     name="email"
                     autocomplete="off"
                     v-focus
-                    placeholder="email@example.com"
+                    placeholder="nev@ceg.hu"
                 />
                 <InputError :message="errors.email" />
             </div>
@@ -53,14 +54,14 @@ defineProps<{
                     data-test="email-password-reset-link-button"
                 >
                     <Spinner v-if="processing" />
-                    Email password reset link
+                    Visszaállító link küldése
                 </Button>
             </div>
         </Form>
 
         <div class="space-x-1 text-center text-sm text-muted-foreground">
-            <span>Or, return to</span>
-            <TextLink :href="login()">log in</TextLink>
+            <span>Vissza a</span>
+            <TextLink :href="login()">bejelentkezéshez</TextLink>
         </div>
     </div>
 </template>

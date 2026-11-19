@@ -11,4 +11,12 @@ export type NavItem = {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon;
     isActive?: boolean;
+    /** Count shown at the end of the row, e.g. overdue items. */
+    badge?: string | number;
+};
+
+export type NavGroup = {
+    /** Overline heading; omit for the first, unlabeled group. */
+    label?: string;
+    items: NavItem[];
 };
