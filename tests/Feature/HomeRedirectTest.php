@@ -19,7 +19,7 @@ class HomeRedirectTest extends TestCase
 
     public function test_authenticated_users_land_on_the_dashboard()
     {
-        $this->actingAs(User::factory()->create());
+        $this->actingAs(User::factory()->admin()->create());
 
         $this->get(route('home'))->assertRedirect(route('dashboard'));
 

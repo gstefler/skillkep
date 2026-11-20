@@ -11,7 +11,7 @@ A corporate learning portal (LMS) for Hungarian companies, with separate views f
 - **Backend:** Laravel 13 (PHP ^8.3; 8.5 locally), Fortify (only login + password reset are enabled), Inertia v3, Wayfinder (typed routes generated into `resources/js/{routes,actions,wayfinder}`, gitignored).
 - **Frontend:** Vue 3 + TypeScript, shadcn-vue (reka-ui) in `resources/js/components/ui`, Tailwind CSS v4, `@lucide/vue` icons, vue-sonner toasts.
 - **Build:** Vite through vite-plus (`vp`). Fonts are self-hosted by the laravel-vite-plugin `bunny()` fonts helper, configured in `vite.config.ts`.
-- **Local DB:** SQLite (`database/database.sqlite`). Sessions, cache and queue use the database driver.
+- **Local dev runs in Laravel Sail** (Docker): PostgreSQL, Redis (sessions, cache) and Mailpit (mail UI on :8025). Run every command through Sail (`./vendor/bin/sail artisan …`, `sail bun …`, `sail composer …`). `node_modules` is installed inside Sail (Linux bindings), so run `sail bun install` rather than a host install.
 - This started from the Laravel Vue starter kit. Its optional features were stripped with `laravel/chisel`: **registration, email verification, password confirmation, two-factor auth and passkeys are removed** (pages, components, routes, migrations, tests). Do not reintroduce them unless asked. The `verified` route middleware is harmless (User does not implement `MustVerifyEmail`).
 
 ## Tooling rules
@@ -24,7 +24,8 @@ A corporate learning portal (LMS) for Hungarian companies, with separate views f
 - `bun run types:check`: vue-tsc.
 - `php artisan test`: PHPUnit feature tests (tests guarded by a disabled Fortify feature are skipped, which is expected). `composer test` also runs Pint and PHPStan.
 - `composer ci:check`: everything above.
-- Test user after `php artisan db:seed`: `test@example.com` / `password` (local only).
+- Seeded accounts after `sail artisan db:seed` (all with password `password`, local only): `superadmin@example.com` (superadmin), `admin@example.com` (admin of Nagy és Társa Kft.), `test@example.com` (learner of the same company).
+- Superadmins are created with `sail artisan user:create-superadmin` (prompts, or `--name= --email=`); the generated password is printed once and emailed.
 - Run `bun run check`, `bun run types:check` and `php artisan test` before you commit.
 
 ## Layout
@@ -74,16 +75,19 @@ routes/settings.php      Profile, security, appearance
 
 ## Current state (2026-11)
 
-- Done: the design-system theme, app shell (brand cell, topbar with breadcrumbs, sidebar with `NavGroup`s defined in `AppSidebar.vue`), the guest/auth layout, Hungarian auth pages and shell, and an empty Dashboard.
+- Done: the design-system theme, app shell (brand cell, topbar with breadcrumbs, role-dependent sidebar `NavGroup`s in `AppSidebar.vue`), the guest/auth layout, Hungarian auth pages and shell, and user/company management (below).
+- **Roles** (`App\Enums\UserRole`, `users.role`): `learner` sees only the empty course list (`/courses`; `/dashboard` redirects there). `admin` belongs to one company and manages (create, view, reset password, delete) only that company's learners. `superadmin` manages companies, admins and all learners; there is no UI to create a superadmin. Access: `admin` / `superadmin` route middleware plus `UserPolicy::manage` and `User::manageableLearnersFor`.
+- Flow: superadmin creates a company, adds learners and admins to it (company page), later assigns courses. A new account gets a generated password: shown once in `GeneratedPasswordBanner` (Inertia flash `generatedPassword`) and emailed by `UserProvisioningService`. Companies with users cannot be deleted.
+- Shared UI for these screens: `DataTable`, `PaginationLinks`, `ConfirmAction`, `NativeSelect`, `CompanyForm`. Wayfinder must be generated with `--with-form` (`sail artisan wayfinder:generate --with-form`; the Vite plugin does it in dev).
 - **Not done yet:**
     - The settings pages (Profile, Security = password change, Appearance) are still in English.
-    - There are no Laravel `hu` lang files, so validation messages show in English (`APP_LOCALE=hu`, fallback `en`).
-    - No domain models yet (courses, assignments, progress, certificates).
+    - Course domain models (courses, assignments to companies/learners, progress, certificates) do not exist yet; course assignment is the next step.
+    - Only `lang/hu/validation.php` exists (it covers the new forms); the auth/password/pagination lang files are still missing, so those messages fall back to English.
 
 ## Planned architecture (not built yet)
 
 - **Video:** HLS, transcoded by a queued ffmpeg job. Each video gets its own AES-128 key. Laravel serves the playlist and the key only after it checks the course assignment. Segments are served statically by Caddy.
-- **Containers:** app (FrankenPHP/Caddy, no Octane) behind Traefik for TLS, Horizon, scheduler, PostgreSQL, Redis. Production uses PostgreSQL + Redis; local dev uses SQLite.
+- **Containers:** app (FrankenPHP/Caddy, no Octane) behind Traefik for TLS, Horizon, scheduler, PostgreSQL, Redis. Production and local Sail both use PostgreSQL + Redis.
 
 ## Conventions
 

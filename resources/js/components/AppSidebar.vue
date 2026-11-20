@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { LayoutDashboard } from '@lucide/vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import {
+    BookOpen,
+    Building2,
+    GraduationCap,
+    LayoutDashboard,
+    ShieldCheck,
+} from '@lucide/vue';
+import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -14,21 +21,56 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as admins } from '@/routes/admins';
+import { index as companies } from '@/routes/companies';
+import { index as courses } from '@/routes/courses';
+import { index as learners } from '@/routes/learners';
 import type { NavGroup } from '@/types';
 
-// Add new sections here; a group with a label renders an overline heading
-// (e.g. { label: 'Vezetőként', items: [...] }).
-const navGroups: NavGroup[] = [
-    {
-        items: [
+// Navigation depends on the role: learners only see their course list,
+// admins manage the learners of their company, superadmins also manage
+// companies and admins. A group with a label renders an overline heading.
+const user = computed(() => usePage().props.auth.user);
+
+const navGroups = computed<NavGroup[]>(() => {
+    if (user.value.role === 'learner') {
+        return [
             {
-                title: 'Irányítópult',
-                href: dashboard(),
-                icon: LayoutDashboard,
+                items: [
+                    { title: 'Képzéseim', href: courses(), icon: BookOpen },
+                ],
             },
-        ],
-    },
-];
+        ];
+    }
+
+    const groups: NavGroup[] = [
+        {
+            items: [
+                {
+                    title: 'Irányítópult',
+                    href: dashboard(),
+                    icon: LayoutDashboard,
+                },
+            ],
+        },
+    ];
+
+    const manage: NavGroup = {
+        label: 'Szervezet',
+        items: [{ title: 'Tanulók', href: learners(), icon: GraduationCap }],
+    };
+
+    if (user.value.role === 'superadmin') {
+        manage.items.unshift(
+            { title: 'Cégek', href: companies(), icon: Building2 },
+            { title: 'Adminisztrátorok', href: admins(), icon: ShieldCheck },
+        );
+    }
+
+    groups.push(manage);
+
+    return groups;
+});
 </script>
 
 <template>

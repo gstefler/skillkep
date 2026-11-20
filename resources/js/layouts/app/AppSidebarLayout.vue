@@ -3,6 +3,7 @@ import AppContent from '@/components/AppContent.vue';
 import AppShell from '@/components/AppShell.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
 import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
+import GeneratedPasswordBanner from '@/components/GeneratedPasswordBanner.vue';
 import { Toaster } from '@/components/ui/sonner';
 import type { BreadcrumbItem } from '@/types';
 
@@ -24,6 +25,7 @@ withDefaults(defineProps<Props>(), {
             <div
                 class="mx-auto flex w-full max-w-(--kep-content-max) flex-1 flex-col gap-6 p-4 md:p-6"
             >
+                <GeneratedPasswordBanner />
                 <slot />
             </div>
         </AppContent>
