@@ -12,7 +12,7 @@ A corporate learning portal (LMS) for Hungarian companies, with separate views f
 - **Frontend:** Vue 3 + TypeScript, shadcn-vue (reka-ui) in `resources/js/components/ui`, Tailwind CSS v4, `@lucide/vue` icons, vue-sonner toasts.
 - **Build:** Vite through vite-plus (`vp`). Fonts are self-hosted by the laravel-vite-plugin `bunny()` fonts helper, configured in `vite.config.ts`.
 - **Local dev runs in Laravel Sail** (Docker): PostgreSQL, Redis (sessions, cache), Mailpit (mail UI on :8025) and pgweb (web PostgreSQL client on http://localhost:8081, bound to localhost only, auto-connected to the app DB; port via `FORWARD_PGWEB_PORT`). Run every command through Sail (`./vendor/bin/sail artisan …`, `sail bun …`, `sail composer …`). `node_modules` is installed inside Sail (Linux bindings), so run `sail bun install` rather than a host install.
-- This started from the Laravel Vue starter kit. Its optional features were stripped with `laravel/chisel`: **registration, email verification, password confirmation, two-factor auth and passkeys are removed** (pages, components, routes, migrations, tests). Do not reintroduce them unless asked. The `verified` route middleware is harmless (User does not implement `MustVerifyEmail`).
+- This started from the Laravel Vue starter kit. Its optional features were stripped with `laravel/chisel`: **registration, email verification, password confirmation, two-factor auth and passkeys are removed** (pages, components, routes, migrations, tests; see ADR-0002). Do not reintroduce them unless asked. The `verified` route middleware is harmless (User does not implement `MustVerifyEmail`).
 
 ## Tooling rules
 
@@ -31,6 +31,7 @@ A corporate learning portal (LMS) for Hungarian companies, with separate views f
 ## Layout
 
 ```
+docs/adr/                Architecture decision records (see "Architecture decisions")
 design-system/           Framework-agnostic design system v1 (source of truth for the look)
   css/tokens.css         Primitive scales, semantic --kep-* tokens, dark theme, density, reduced motion
   css/components.css     .kep-* component classes (@layer components)
@@ -84,10 +85,16 @@ routes/settings.php      Profile, security, appearance
     - Course domain models (courses, assignments to companies/learners, progress, certificates) do not exist yet; course assignment is the next step.
     - Only `lang/hu/validation.php` exists (it covers the new forms); the auth/password/pagination lang files are still missing, so those messages fall back to English.
 
-## Planned architecture (not built yet)
+## Architecture decisions
 
-- **Video:** HLS, transcoded by a queued ffmpeg job. Each video gets its own AES-128 key. Laravel serves the playlist and the key only after it checks the course assignment. Segments are served statically by Caddy.
-- **Containers:** app (FrankenPHP/Caddy, no Octane) behind Traefik for TLS, Horizon, scheduler, PostgreSQL, Redis. Production and local Sail both use PostgreSQL + Redis.
+Decisions are recorded as ADRs in `docs/adr/` (index in `docs/adr/README.md`). Read the relevant ADR before you work in its area, and add a new numbered ADR when you make a decision of the same weight. In short:
+
+- **0001 Stack (accepted):** Laravel + Fortify, Inertia + Vue 3 + TS, shadcn-vue themed to the design system (petrol, IBM Plex, Tailwind v4), PostgreSQL + Redis.
+- **0002 No self-registration (accepted):** every page requires login; no registration, email verification, 2FA or passkeys.
+- **0003 Deployment (accepted, not built):** one image, containers for app (FrankenPHP/Caddy, no Octane, behind Traefik TLS), Horizon, scheduler, PostgreSQL, Redis; Docker restart instead of supervisord.
+- **0004 Video (accepted, not built):** HLS via queued ffmpeg, AES-128 key per video; Laravel serves playlist + key after the course-assignment check, Caddy serves segments statically.
+- **0005 Company login methods (proposed):** per company M365, Google Workspace or email + password, with an email allowlist; verify `tid`/`hd` and bind `oid`/`sub`, never trust the email claim alone.
+- **0006 Company subdomains (proposed):** `cegem.skillkep.eu` shows that company's login and branding; single DB, wildcard DNS/TLS, one central OAuth callback.
 
 ## Conventions
 
