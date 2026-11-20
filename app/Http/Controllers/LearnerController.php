@@ -6,7 +6,9 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Concerns\FlashesGeneratedPassword;
 use App\Http\Requests\Admin\StoreLearnerRequest;
 use App\Models\Company;
+use App\Models\Course;
 use App\Models\User;
+use App\Services\CourseProgress;
 use App\Services\UserProvisioningService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -85,12 +87,29 @@ class LearnerController extends Controller
         return to_route('learners.index');
     }
 
-    public function show(User $user): Response
+    public function show(Request $request, User $user): Response
     {
         Gate::authorize('manage', $user);
         abort_unless($user->isLearner(), 404);
 
         $user->load(['company:id,name', 'createdBy:id,name']);
+
+        // Courses available to the learner's company; access is still per learner (ADR-0007).
+        $enrolledIds = $user->courses()->pluck('courses.id')->all();
+        $courses = Course::query()
+            ->manageableBy($request->user())
+            ->whereHas('companies', fn ($query) => $query->whereKey($user->company_id ?? 0))
+            ->orderBy('title')
+            ->get(['id', 'title', 'is_published'])
+            ->map(fn (Course $course) => [
+                'id' => $course->id,
+                'title' => $course->title,
+                'is_published' => $course->is_published,
+                'enrolled' => in_array($course->id, $enrolledIds, true),
+                'progress' => in_array($course->id, $enrolledIds, true)
+                    ? CourseProgress::for($course, $user)->percent()
+                    : null,
+            ]);
 
         return Inertia::render('learners/Show', [
             'learner' => [
@@ -101,6 +120,7 @@ class LearnerController extends Controller
                 'created_by' => $user->createdBy?->name,
                 'created_at' => $user->created_at?->format('Y. m. d.'),
             ],
+            'courses' => $courses,
         ]);
     }
 

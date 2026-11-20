@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -87,6 +88,38 @@ class User extends Authenticatable
     public function createdUsers(): HasMany
     {
         return $this->hasMany(self::class, 'created_by_user_id');
+    }
+
+    /**
+     * Courses the learner is enrolled in (ADR-0007).
+     *
+     * @return BelongsToMany<Course, $this, Enrollment>
+     */
+    public function courses(): BelongsToMany
+    {
+        return $this->belongsToMany(Course::class)
+            ->using(Enrollment::class)
+            ->withPivot('enrolled_by_user_id')
+            ->withTimestamps();
+    }
+
+    /** @return HasMany<Attempt, $this> */
+    public function attempts(): HasMany
+    {
+        return $this->hasMany(Attempt::class);
+    }
+
+    /**
+     * Courses the learner can open right now: enrolled, published, and
+     * still available to the learner's company.
+     *
+     * @return BelongsToMany<Course, $this, Enrollment>
+     */
+    public function accessibleCourses(): BelongsToMany
+    {
+        return $this->courses()
+            ->where('courses.is_published', true)
+            ->whereHas('companies', fn ($query) => $query->whereKey($this->company_id ?? 0));
     }
 
     /**

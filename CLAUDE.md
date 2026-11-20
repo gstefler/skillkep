@@ -77,13 +77,19 @@ routes/settings.php      Profile, security, appearance
 
 ## Current state (2026-11)
 
-- Done: the design-system theme, app shell (brand cell, topbar with breadcrumbs, role-dependent sidebar `NavGroup`s in `AppSidebar.vue`), the guest/auth layout, Hungarian auth pages and shell, and user/company management (below).
-- **Roles** (`App\Enums\UserRole`, `users.role`): `learner` sees only the empty course list (`/courses`; `/dashboard` redirects there). `admin` belongs to one company and manages (create, view, reset password, delete) only that company's learners. `superadmin` manages companies, admins and all learners; there is no UI to create a superadmin. Access: `admin` / `superadmin` route middleware plus `UserPolicy::manage` and `User::manageableLearnersFor`.
+- Done: the design-system theme, app shell (brand cell, topbar with breadcrumbs, role-dependent sidebar `NavGroup`s in `AppSidebar.vue`), the guest/auth layout, Hungarian auth pages and shell, user/company management, and courses (below).
+- **Roles** (`App\Enums\UserRole`, `users.role`): `learner` sees only their courses (`/courses`; `/dashboard` redirects there). `admin` belongs to one company and manages (create, view, reset password, delete) only that company's learners. `superadmin` manages companies, admins and all learners; there is no UI to create a superadmin. Access: `admin` / `superadmin` route middleware plus `UserPolicy::manage` and `User::manageableLearnersFor`.
 - Flow: superadmin creates a company, adds learners and admins to it (company page), later assigns courses. A new account gets a generated password: shown once in `GeneratedPasswordBanner` (Inertia flash `generatedPassword`) and emailed by `UserProvisioningService`. Companies with users cannot be deleted.
 - Shared UI for these screens: `DataTable`, `PaginationLinks`, `ConfirmAction`, `NativeSelect`, `CompanyForm`. Wayfinder must be generated with `--with-form` (`sail artisan wayfinder:generate --with-form`; the Vite plugin does it in dev).
+- **Courses** (ported from `learning_platform`): `Course` → `Module` (ordered, optional `prerequisite_module_id`) → `Material` (PDF or video) + one `Test` → `Question` (`true_false`, `write`, `select_one`, `select_multiple`, `pair`) → `QuestionOption`; learners' `Attempt`/`AttemptAnswer`, scored by `GradingService`; locks and progress in `CourseProgress`.
+    - Access (ADR-0007): superadmin makes a course available to companies (`company_course`); learners are still enrolled one by one (`course_user`, pivot model `Enrollment`) by a superadmin or their company admin. `CoursePolicy` (`view` / `manage` / `administer`), `Course::manageableBy`, `Course::enrollableLearnersFor`.
+    - Management UI under `/manage/courses` (`Manage\*` controllers, `pages/manage/courses`); learner UI under `/courses/{slug}` (`pages/courses`, `pages/attempts`).
+    - Upload: superadmin only, ZIP only, resumable chunked upload (`CourseUpload`, `Manage\CourseUploadController`, client in `composables/useChunkedUpload.ts`: pause/resume, progress, speed, ETA). `ProcessCourseUpload` (queue `imports`) extracts and imports via `CourseImportService`; `course-uploads:prune` runs daily.
+    - Video (ADR-0004): `TranscodeVideo` (queue `video`) makes AES-128 HLS with ffmpeg. Key + playlist on the private `local` disk, segments on the `hls` disk (`storage/app/hls`, linked to `public/hls` by `sail artisan storage:link`, URL `HLS_URL`, default `/hls`). `MaterialController` serves the PDF, playlist and key after the access check; `HlsVideo.vue` plays it with hls.js.
+    - Jobs are pushed on the default connection's `imports` / `video` lists; the Horizon supervisors of the same names consume them. Locally: `sail artisan queue:work redis --queue=imports,video` (or Horizon).
 - **Not done yet:**
     - The settings pages (Profile, Security = password change, Appearance) are still in English.
-    - Course domain models (courses, assignments to companies/learners, progress, certificates) do not exist yet; course assignment is the next step.
+    - Certificates, deadlines and course editing beyond title/description (modules and materials come only from the ZIP).
     - Only `lang/hu/validation.php` exists (it covers the new forms); the auth/password/pagination lang files are still missing, so those messages fall back to English.
 
 ## Architecture decisions
@@ -93,9 +99,10 @@ Decisions are recorded as ADRs in `docs/adr/` (index in `docs/adr/README.md`). R
 - **0001 Stack (accepted):** Laravel + Fortify, Inertia + Vue 3 + TS, shadcn-vue themed to the design system (petrol, IBM Plex, Tailwind v4), PostgreSQL + Redis.
 - **0002 No self-registration (accepted):** every page requires login; no registration, email verification, 2FA or passkeys.
 - **0003 Deployment (accepted, not built):** one image, containers for app (FrankenPHP/Caddy, no Octane, behind Traefik TLS), Horizon, scheduler, PostgreSQL, Redis; Docker restart instead of supervisord.
-- **0004 Video (accepted, not built):** HLS via queued ffmpeg, AES-128 key per video; Laravel serves playlist + key after the course-assignment check, Caddy serves segments statically.
+- **0004 Video (accepted, built; Caddy part waits for ADR-0003):** HLS via queued ffmpeg, AES-128 key per video; Laravel serves playlist + key after the course-assignment check, Caddy serves segments statically.
 - **0005 Company login methods (proposed):** per company M365, Google Workspace or email + password, with an email allowlist; verify `tid`/`hd` and bind `oid`/`sub`, never trust the email claim alone.
 - **0006 Company subdomains (proposed):** `cegem.skillkep.eu` shows that company's login and branding; single DB, wildcard DNS/TLS, one central OAuth callback.
+- **0007 Course access (accepted):** a course is made available to companies, and learners are always enrolled one by one, only for courses their company has.
 
 ## Conventions
 

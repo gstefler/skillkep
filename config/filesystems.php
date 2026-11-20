@@ -47,6 +47,19 @@ return [
             'report' => false,
         ],
 
+        // Encrypted HLS segments (ADR-0004), served statically by the web
+        // server from public/hls. Keys and playlists stay on the local disk.
+        'hls' => [
+            'driver' => 'local',
+            'root' => storage_path('app/hls'),
+            // Root-relative by default, so segments load from whichever host
+            // served the playlist; set HLS_URL for a CDN.
+            'url' => env('HLS_URL', '/hls'),
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -75,6 +88,7 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public'),
+        public_path('hls') => storage_path('app/hls'),
     ],
 
 ];

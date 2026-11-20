@@ -25,6 +25,7 @@ import { index as admins } from '@/routes/admins';
 import { index as companies } from '@/routes/companies';
 import { index as courses } from '@/routes/courses';
 import { index as learners } from '@/routes/learners';
+import { index as manageCourses } from '@/routes/manage/courses';
 import type { NavGroup } from '@/types';
 
 // Navigation depends on the role: learners only see their course list,
@@ -57,7 +58,10 @@ const navGroups = computed<NavGroup[]>(() => {
 
     const manage: NavGroup = {
         label: 'Szervezet',
-        items: [{ title: 'Tanulók', href: learners(), icon: GraduationCap }],
+        items: [
+            { title: 'Képzések', href: manageCourses(), icon: BookOpen },
+            { title: 'Tanulók', href: learners(), icon: GraduationCap },
+        ],
     };
 
     if (user.value.role === 'superadmin') {

@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    // HLS transcoding of course videos (ADR-0004).
+    'ffmpeg' => [
+        'binary' => env('FFMPEG_BINARY', 'ffmpeg'),
+        'ffprobe' => env('FFPROBE_BINARY', 'ffprobe'),
+    ],
+
 ];
