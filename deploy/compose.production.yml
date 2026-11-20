@@ -27,6 +27,12 @@ services:
 
     app:
         <<: *app
+        healthcheck:
+            test: ['CMD', 'curl', '-fsS', 'http://localhost:8080/up']
+            interval: 15s
+            timeout: 5s
+            start_period: 20s
+            retries: 3
         depends_on:
             migrate:
                 condition: service_completed_successfully

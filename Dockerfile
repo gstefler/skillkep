@@ -63,5 +63,9 @@ USER www-data
 
 EXPOSE 8080
 
+# The base image probes Caddy's admin API, which is off here. The app
+# service gets its own HTTP check in deploy/compose.production.yml.
+HEALTHCHECK NONE
+
 ENTRYPOINT ["app-entrypoint"]
 CMD ["frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile"]
