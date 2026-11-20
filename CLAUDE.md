@@ -11,22 +11,23 @@ A corporate learning portal (LMS) for Hungarian companies, with separate views f
 - **Backend:** Laravel 13 (PHP ^8.3; 8.5 locally), Fortify (only login + password reset are enabled), Inertia v3, Wayfinder (typed routes generated into `resources/js/{routes,actions,wayfinder}`, gitignored).
 - **Frontend:** Vue 3 + TypeScript, shadcn-vue (reka-ui) in `resources/js/components/ui`, Tailwind CSS v4, `@lucide/vue` icons, vue-sonner toasts.
 - **Build:** Vite through vite-plus (`vp`). Fonts are self-hosted by the laravel-vite-plugin `bunny()` fonts helper, configured in `vite.config.ts`.
-- **Local dev runs in Laravel Sail** (Docker): PostgreSQL, Redis (sessions, cache), Mailpit (mail UI on :8025) and pgweb (web PostgreSQL client on http://localhost:8081, bound to localhost only, auto-connected to the app DB; port via `FORWARD_PGWEB_PORT`). Run every command through Sail (`./vendor/bin/sail artisan …`, `sail bun …`, `sail composer …`). `node_modules` is installed inside Sail (Linux bindings), so run `sail bun install` rather than a host install.
+- **Local dev runs in Laravel Sail** (Docker): PostgreSQL, Redis (sessions, cache), Mailpit (mail UI on :8025) and pgweb (web PostgreSQL client on http://localhost:8081, bound to localhost only, auto-connected to the app DB; port via `FORWARD_PGWEB_PORT`). See the Tooling rules: every command runs through Sail. `node_modules` is installed inside Sail (Linux bindings), so run `sail bun install` rather than a host install.
 - This started from the Laravel Vue starter kit. Its optional features were stripped with `laravel/chisel`: **registration, email verification, password confirmation, two-factor auth and passkeys are removed** (pages, components, routes, migrations, tests; see ADR-0002). Do not reintroduce them unless asked. The `verified` route middleware is harmless (User does not implement `MustVerifyEmail`).
 
 ## Tooling rules
 
-- **JS: always `bun`. Never `node`, `npm` or `npx`** (use `bunx` if you need it).
-- `composer setup`: first install (composer, `.env`, key, migrate, `bun install`, build).
-- `composer dev`: dev servers (`php artisan dev`).
-- `bun run build`: production assets.
-- `bun run check` / `bun run check:fix`: vp lint and format (oxlint/oxfmt; 4-space indent, single quotes, Tailwind class sorting).
-- `bun run types:check`: vue-tsc.
-- `php artisan test`: PHPUnit feature tests (tests guarded by a disabled Fortify feature are skipped, which is expected). `composer test` also runs Pint and PHPStan.
-- `composer ci:check`: everything above.
+- **Local development always runs in Sail.** Run PHP, Composer, Artisan and bun through `./vendor/bin/sail` (alias `sail`), never on the host: `sail artisan …`, `sail composer …`, `sail bun …`, `sail test`. Start the stack with `sail up -d`. The only exception is git.
+- **JS: always `bun`. Never `node`, `npm` or `npx`** (use `sail bunx` if you need it).
+- `sail composer setup`: first install (composer, `.env`, key, migrate, `bun install`, build).
+- `sail composer dev`: dev servers (`php artisan dev`).
+- `sail bun run build`: production assets.
+- `sail bun run check` / `sail bun run check:fix`: vp lint and format (oxlint/oxfmt; 4-space indent, single quotes, Tailwind class sorting).
+- `sail bun run types:check`: vue-tsc.
+- `sail artisan test`: PHPUnit feature tests (tests guarded by a disabled Fortify feature are skipped, which is expected). `sail composer test` also runs Pint and PHPStan.
+- `sail composer ci:check`: everything above.
 - Seeded accounts after `sail artisan db:seed` (all with password `password`, local only): `superadmin@example.com` (superadmin), `admin@example.com` (admin of Nagy és Társa Kft.), `test@example.com` (learner of the same company).
 - Superadmins are created with `sail artisan user:create-superadmin` (prompts, or `--name= --email=`); the generated password is printed once and emailed.
-- Run `bun run check`, `bun run types:check` and `php artisan test` before you commit.
+- Run `sail bun run check`, `sail bun run types:check` and `sail artisan test` before you commit.
 
 ## Layout
 
