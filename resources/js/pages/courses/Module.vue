@@ -130,6 +130,7 @@ setLayoutProps({
                 v-if="material.type === 'video' && material.playable"
                 :src="playlist.url(material.id)"
                 :title="material.title"
+                :duration="material.duration_seconds"
             />
             <p
                 v-else-if="material.type === 'video'"
