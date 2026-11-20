@@ -98,11 +98,17 @@ Decisions are recorded as ADRs in `docs/adr/` (index in `docs/adr/README.md`). R
 
 - **0001 Stack (accepted):** Laravel + Fortify, Inertia + Vue 3 + TS, shadcn-vue themed to the design system (petrol, IBM Plex, Tailwind v4), PostgreSQL + Redis.
 - **0002 No self-registration (accepted):** every page requires login; no registration, email verification, 2FA or passkeys.
-- **0003 Deployment (accepted, not built):** one image, containers for app (FrankenPHP/Caddy, no Octane, behind Traefik TLS), Horizon, scheduler, PostgreSQL, Redis; Docker restart instead of supervisord.
+- **0003 Deployment (accepted, built):** one image, containers for app (FrankenPHP/Caddy, no Octane, behind Traefik TLS), Horizon, scheduler, PostgreSQL, Redis; Docker restart instead of supervisord.
 - **0004 Video (accepted, built; Caddy part waits for ADR-0003):** HLS via queued ffmpeg, AES-128 key per video; Laravel serves playlist + key after the course-assignment check, Caddy serves segments statically.
 - **0005 Company login methods (proposed):** per company M365, Google Workspace or email + password, with an email allowlist; verify `tid`/`hd` and bind `oid`/`sub`, never trust the email claim alone.
 - **0006 Company subdomains (proposed):** `cegem.skillkep.eu` shows that company's login and branding; single DB, wildcard DNS/TLS, one central OAuth callback.
 - **0007 Course access (accepted):** a course is made available to companies, and learners are always enrolled one by one, only for courses their company has.
+
+## Production
+
+- https://v2.skillkep.eu, deployed by Dokploy (project `skillkep`). Pushing to `main` builds `ghcr.io/gstefler/skillkep` and triggers the deploy (migrations run first). Details in ADR-0003, compose in `deploy/compose.production.yml`; env vars only in Dokploy.
+- Mail is not sent: it lands in Mailpit (https://mailpit.skillkep.eu, basic auth).
+- Run artisan in production with `ssh stefler@skillkep.eu docker exec skillkep-app-lovk0r-app-1 php artisan …`.
 
 ## Conventions
 
