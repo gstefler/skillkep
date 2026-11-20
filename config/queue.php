@@ -73,6 +73,28 @@ return [
             'after_commit' => false,
         ],
 
+        // Video transcoding (ADR-0004). `retry_after` must stay above the
+        // Horizon `video` supervisor timeout, or a running job is started twice.
+        'redis-video' => [
+            'driver' => 'redis',
+            'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
+            'queue' => 'video',
+            'retry_after' => (int) env('HORIZON_VIDEO_TIMEOUT', 3600) + 300,
+            'block_for' => null,
+            'after_commit' => false,
+        ],
+
+        // ZIP extraction and course import. Like `redis-video`, `retry_after`
+        // must stay above the Horizon `imports` supervisor timeout.
+        'redis-imports' => [
+            'driver' => 'redis',
+            'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
+            'queue' => 'imports',
+            'retry_after' => (int) env('HORIZON_IMPORTS_TIMEOUT', 3600) + 300,
+            'block_for' => null,
+            'after_commit' => false,
+        ],
+
         'deferred' => [
             'driver' => 'deferred',
         ],
