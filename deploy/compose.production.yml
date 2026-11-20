@@ -1,0 +1,54 @@
+# Dokploy "Compose" service for production (ADR-0003). Dokploy keeps a raw
+# copy of this file; update it there too when you change it here.
+# PostgreSQL, Redis and Mailpit are separate Dokploy services on the same
+# dokploy-network; their hosts and passwords come from the Dokploy env (.env).
+# Domains (Traefik, TLS) are attached to the `app` service in Dokploy.
+
+x-app: &app
+    image: ghcr.io/gstefler/skillkep:${IMAGE_TAG:-latest}
+    pull_policy: always
+    restart: unless-stopped
+    env_file:
+        - .env
+    volumes:
+        # Host folder, owned by www-data (33:33). Holds private/ (playlists,
+        # AES keys, uploads), public/ and hls/ (served statically at /hls).
+        - /srv/skillkep/storage:/app/storage/app
+    networks:
+        - dokploy-network
+
+services:
+    migrate:
+        <<: *app
+        restart: 'no'
+        command: ['php', 'artisan', 'migrate', '--force', '--no-interaction']
+        environment:
+            APP_SKIP_OPTIMIZE: 'true'
+
+    app:
+        <<: *app
+        depends_on:
+            migrate:
+                condition: service_completed_successfully
+
+    horizon:
+        <<: *app
+        command: ['php', 'artisan', 'horizon']
+        # Let a running ffmpeg encode finish (HORIZON_VIDEO_TIMEOUT, 1 h)
+        # before Docker kills the container on redeploy.
+        stop_signal: SIGTERM
+        stop_grace_period: 65m
+        depends_on:
+            migrate:
+                condition: service_completed_successfully
+
+    scheduler:
+        <<: *app
+        command: ['php', 'artisan', 'schedule:work']
+        depends_on:
+            migrate:
+                condition: service_completed_successfully
+
+networks:
+    dokploy-network:
+        external: true
